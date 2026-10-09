@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <!-- 移动端基础适配：让页面在小屏设备上按设备宽度正常渲染 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>王天睿 · 个人主页</title>
+  <!-- 引入统一样式表（相对路径） -->
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <!-- ============================================================
+       1. Header 顶部导航：品牌名称 + 菜单 + 语言切换 + 主行动按钮
+       ============================================================ -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#hero">
+        <!-- 文字字母徽标头像：用姓名首字占位，后续可替换为真实头像图片 -->
+        <span class="brand-avatar" aria-hidden="true">王</span>
+        <span class="brand-name" data-i18n="brand.name">王天睿</span>
+      </a>
+
+      <nav id="site-nav" class="site-nav" aria-label="主导航">
+        <ul class="nav-list">
+          <li><a href="#about" data-i18n="nav.about">关于我</a></li>
+          <li><a href="#projects" data-i18n="nav.projects">项目</a></li>
+          <li><a href="#skills" data-i18n="nav.skills">技能</a></li>
+          <li><a href="#music" data-i18n="nav.music">音乐</a></li>
+          <li><a href="#contact" data-i18n="nav.contact">联系</a></li>
+        </ul>
+      </nav>
+
+      <!-- 语言切换按钮组：简体中文 / 繁体中文 / 英语
+           按钮文字使用「简 / 繁 / EN」保持紧凑，切换逻辑见 js/main.js -->
+      <div class="lang-switch" role="group" aria-label="语言切换 / Language">
+        <button type="button" class="lang-btn is-active" data-lang="zh-CN" title="简体中文">简</button>
+        <button type="button" class="lang-btn" data-lang="zh-TW" title="繁體中文">繁</button>
+        <button type="button" class="lang-btn" data-lang="en" title="English">EN</button>
+      </div>
+
+      <!-- 移动端汉堡按钮：仅在屏幕宽度 < 768px 时显示；三条横线由 CSS 绘制，
+           展开 / 收起逻辑见 js/main.js。桌面端该按钮隐藏，导航依旧完整展示 -->
+      <button class="nav-toggle" type="button" aria-label="打开导航菜单"
+        aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+      </button>
+
+      <!-- 主行动按钮：跳转到联系区 -->
+      <a class="btn btn-primary header-cta" href="#contact" data-i18n="header.cta">联系我</a>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       2. Hero 首屏区域：姓名 + 简介 + 标签组 + 行动按钮
+       ============================================================ -->
+  <section id="hero" class="section hero">
+    <div class="container hero-inner">
+      <!-- 头像占位：用文字字母徽标表示，此处为姓名首字「王」 -->
+      <div class="hero-avatar" aria-hidden="true">王</div>
+
+      <h1 class="hero-name" data-i18n="hero.greeting">你好，我是 <span class="highlight">王天睿</span></h1>
+      <p class="hero-tagline" data-i18n="hero.tagline">一名天津大学大一本科生，喜欢钻研前端。</p>
+
+      <!-- 标签组：个人关键词，可自由增删 -->
+      <ul class="hero-tags">
+        <li class="tag" data-i18n="hero.tag.1">大一新生</li>
+        <li class="tag" data-i18n="hero.tag.2">前端开发</li>
+        <li class="tag" data-i18n="hero.tag.3">爱听歌</li>
+        <li class="tag" data-i18n="hero.tag.4">PTCG</li>
+      </ul>
+
+      <!-- 1-2 个行动按钮 -->
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#projects" data-i18n="hero.action.projects">查看项目</a>
+        <a class="btn btn-outline" href="#contact" data-i18n="hero.action.contact">联系我</a>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <!-- ============================================================
+         3. 关于我 section：身份 + 简单介绍 + 专业/城市
+         ============================================================ -->
+    <section id="about" class="section">
+      <div class="container">
+        <h2 class="section-title" data-i18n="about.title">关于我</h2>
+        <div class="card">
+          <p class="about-intro" data-i18n="about.intro">
+            我是天津大学的一名大一本科生，就读于智能医学工程专业（脑机接口方向），
+            平时喜欢钻研前端开发。这个主页是我的课程作业 V1 版本，后续会持续迭代更新。
+          </p>
+
+          <ul class="about-info">
+            <li><span class="about-label" data-i18n="about.label.identity">身份</span> <span data-i18n="about.value.identity">天津大学大一本科生</span></li>
+            <li><span class="about-label" data-i18n="about.label.major">专业</span> <span data-i18n="about.value.major">智能医学工程（脑机接口方向）</span></li>
+            <li><span class="about-label" data-i18n="about.label.city">城市</span> <span data-i18n="about.value.city">天津 / 深圳</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. 项目与作品 section：卡片列表，3 个占位卡片
+         （暂未提供项目信息，保留占位，后续替换）
+         ============================================================ -->
+    <section id="projects" class="section">
+      <div class="container">
+        <h2 class="section-title" data-i18n="projects.title">项目与作品</h2>
+        <p class="section-desc" data-i18n="projects.desc">这里展示我做过的项目或作品，目前为占位，后续替换为真实内容。</p>
+
+        <div class="project-grid">
+          <!-- 项目卡片 1：标题 + 简介 + 跳转链接占位 -->
+          <article class="card project-card">
+            <h3 class="project-title" data-i18n="projects.1.title">项目标题一（占位）</h3>
+            <p class="project-desc" data-i18n="projects.1.desc">一句话说明这个项目是做什么的、用了什么技术、有什么亮点。</p>
+            <a class="project-link" href="javascript:void(0);" data-i18n="projects.1.link">查看详情 →</a>
+          </article>
+
+          <!-- 项目卡片 2 -->
+          <article class="card project-card">
+            <h3 class="project-title" data-i18n="projects.2.title">项目标题二（占位）</h3>
+            <p class="project-desc" data-i18n="projects.2.desc">一句话说明这个项目是做什么的、用了什么技术、有什么亮点。</p>
+            <a class="project-link" href="javascript:void(0);" data-i18n="projects.2.link">查看详情 →</a>
+          </article>
+
+          <!-- 项目卡片 3 -->
+          <article class="card project-card">
+            <h3 class="project-title" data-i18n="projects.3.title">项目标题三（占位）</h3>
+            <p class="project-desc" data-i18n="projects.3.desc">一句话说明这个项目是做什么的、用了什么技术、有什么亮点。</p>
+            <a class="project-link" href="javascript:void(0);" data-i18n="projects.3.link">查看详情 →</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         5. 技能与兴趣 section（可选模块）：标签形式展示
+         ============================================================ -->
+    <section id="skills" class="section">
+      <div class="container">
+        <h2 class="section-title" data-i18n="skills.title">技能与兴趣</h2>
+        <div class="card">
+          <h3 class="sub-title" data-i18n="skills.skillHeading">技能</h3>
+          <ul class="tag-list">
+            <li class="tag" data-i18n="skills.skill.1">HTML</li>
+            <li class="tag" data-i18n="skills.skill.2">CSS</li>
+            <li class="tag" data-i18n="skills.skill.3">JavaScript（学习中）</li>
+            <li class="tag" data-i18n="skills.skill.4">更多技能…（占位）</li>
+          </ul>
+
+          <h3 class="sub-title" data-i18n="skills.interestHeading">兴趣</h3>
+          <ul class="tag-list">
+            <li class="tag" data-i18n="skills.interest.1">前端</li>
+            <li class="tag" data-i18n="skills.interest.2">听歌</li>
+            <li class="tag" data-i18n="skills.interest.3">PTCG</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         6. 网易云歌单 section：标题 + iframe 嵌入 + 说明
+         ============================================================
+         【如何替换为自己的公开歌单】
+         1. 打开网易云音乐网页版，找到你的某个公开歌单。
+         2. 点击歌单里的「生成外链播放器」；
+         3. 复制 iframe 代码，把其中 id=后面的数字换成你自己的歌单ID；
+         4. 把下面 iframe 替换成你复制到的代码，即可显示你的歌单。
+
+         超简单方法：只需要把下面 id= 后的数字改成你的歌单ID（type=0 表示歌单，不要改）。
+         当前使用的是王天睿的歌单 ID：18388731081。
+         ============================================================ -->
+    <section id="music" class="section">
+      <div class="container">
+        <h2 class="section-title" data-i18n="music.title">我的音乐歌单</h2>
+        <p class="section-desc" data-i18n="music.desc">
+          这里是我在网易云音乐收藏的公开歌单，播放器只做静态嵌入展示（V1 不做复杂控制）。
+          喜欢听歌，音乐让生活有了节奏感。
+        </p>
+
+        <!-- 网易云公开歌单 iframe 嵌入（外链播放器），type=0 代表歌单 -->
+        <!-- 重要：src 必须以完整的 https:// 开头。若写成 //music.163.com，
+             用本地 file:// 双击打开时会被浏览器解析成 file://music.163.com，导致播放器无法加载。 -->
+        <!-- 现在使用的是王天睿自己的歌单（ID：18388731081）；如需更换，改下面的 id= 即可，height 也可按需调整 -->
+        <div class="music-embed">
+          <iframe
+            class="music-frame"
+            src="https://music.163.com/outchain/player?type=0&id=18388731081&auto=0&height=430"
+            frameborder="no"
+            scrolling="no"
+            style="width: 100%; height: 430px;"
+            title="网易云音乐歌单播放器">
+          </iframe>
+        </div>
+        <!-- 兜底链接：若浏览器或网络拦截第三方 iframe，可直接跳转到网易云歌单页 -->
+        <p class="music-fallback" data-i18n="music.fallback">
+          播放器无法显示？<a href="https://music.163.com/#/playlist?id=18388731081" target="_blank" rel="noopener">点此在网易云音乐中打开我的歌单 →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         7. 数字分身 / Digital Twin 入口：静态按钮占位
+         仅做占位按钮，不实现对话功能，留给后续 V4 / 期末扩展。
+         ============================================================ -->
+    <section id="twin" class="section">
+      <div class="container">
+        <h2 class="section-title" data-i18n="twin.title">数字分身 · Digital Twin</h2>
+        <div class="card card-center">
+          <p class="twin-desc" data-i18n="twin.desc">这里预留了「数字分身」入口。V1 仅为静态占位按钮，后续版本（V4 / 期末扩展）再接入对话功能。</p>
+          <!-- 静态占位按钮：V1 不做任何功能，暂不跳转 -->
+          <button class="btn btn-primary" type="button" disabled data-i18n="twin.button">数字分身（敬请期待）</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         8. 联系我 section：邮箱 + 电话 + 社交链接
+         ============================================================ -->
+    <section id="contact" class="section">
+      <div class="container">
+        <h2 class="section-title" data-i18n="contact.title">联系我</h2>
+        <div class="card">
+          <p class="contact-desc" data-i18n="contact.desc">欢迎交流、合作或联系。</p>
+          <ul class="contact-list">
+            <li>
+              <span class="contact-label" data-i18n="contact.label.email">邮箱</span>
+              <a href="mailto:wtr20071014@tju.edu.cn">wtr20071014@tju.edu.cn</a>
+            </li>
+            <li>
+              <span class="contact-label" data-i18n="contact.label.phone">电话</span>
+              <!-- 点击后可直接拨号（手机端生效） -->
+              <a href="tel:18002100171">18002100171</a>
+            </li>
+            <li>
+              <span class="contact-label" data-i18n="contact.label.github">GitHub</span>
+              <!-- 王天睿的 GitHub 主页 -->
+              <a href="https://github.com/wtrrr123" target="_blank" rel="noopener" data-i18n="contact.value.github">github.com/wtrrr123</a>
+            </li>
+            <li>
+              <span class="contact-label" data-i18n="contact.label.netease">网易云音乐</span>
+              <!-- 王天睿的网易云音乐主页分享链接 -->
+              <a href="https://163cn.tv/bf3bK9Ra" target="_blank" rel="noopener" data-i18n="contact.value.netease">我的网易云音乐主页</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         8.1 访客反馈 form（V5 新增）
+         ------------------------------------------------------------
+         · 只新增这一个模块，位置在「联系我」section 的正下方；
+           #contact 及之前所有模块的结构、顺序、文字、装饰全部未改动。
+         · 字段只有两个：昵称（选填）+ 反馈内容（必填）——
+           不收集手机号 / 身份证 / 邮箱等任何敏感信息，也无需登录。
+         · 提交走 CDN 引入的 Supabase JS Client（见本文件末尾的 script），
+           目标表是 Supabase 的 feedback 表；
+           建表 SQL、RLS 策略与部署注意事项都写在 js/main.js「功能 8」的注释里，
+           上线前请先按那份说明建好表、填好两个占位。
+         ============================================================ -->
+    <section id="feedback" class="section">
+      <div class="container">
+        <h2 class="section-title" data-i18n="feedback.title">访客反馈</h2>
+        <p class="section-desc" data-i18n="feedback.desc">
+          欢迎留下你的建议或想法，无需登录即可提交。
+        </p>
+
+        <!-- 复用全站统一的卡片样式（.card 提供白底 / 圆角 / 阴影 / 悬浮上浮） -->
+        <div class="card">
+          <!-- novalidate：关掉浏览器自带的原生提示气泡，统一用下方中文提示 -->
+          <form id="feedback-form" class="feedback-form" novalidate>
+            <div class="form-row">
+              <label class="form-label" for="feedback-nickname">
+                <span data-i18n="feedback.nickname">昵称</span>
+                <span class="form-optional" data-i18n="feedback.optional">（选填）</span>
+              </label>
+              <input
+                id="feedback-nickname"
+                class="form-input"
+                type="text"
+                name="nickname"
+                maxlength="30"
+                autocomplete="nickname"
+                placeholder="怎么称呼你？（不填也可以）" />
+            </div>
+
+            <div class="form-row">
+              <label class="form-label" for="feedback-message">
+                <span data-i18n="feedback.message">反馈内容</span>
+                <span class="form-required" data-i18n="feedback.required">（必填）</span>
+              </label>
+              <textarea
+                id="feedback-message"
+                class="form-input form-textarea"
+                name="message"
+                rows="5"
+                maxlength="500"
+                required
+                placeholder="想说的话…（最多 500 字）"></textarea>
+              <p class="form-counter">
+                <span id="feedback-count">0</span> / 500
+              </p>
+            </div>
+
+            <div class="form-actions">
+              <button id="feedback-submit" class="btn btn-primary" type="submit"
+                data-i18n="feedback.submit">提交反馈</button>
+              <button id="feedback-reset" class="btn btn-outline" type="reset"
+                data-i18n="feedback.reset">清空</button>
+            </div>
+
+            <!-- 提交状态提示：校验失败 / 提交中 / 成功 / 失败都用这里一句，
+                 role="status" + aria-live 让屏幕阅读器也能读到 -->
+            <p id="feedback-status" class="form-status" role="status" aria-live="polite"></p>
+
+            <p class="form-hint" data-i18n="feedback.privacy">
+              仅收集昵称与反馈内容，用于改进这个主页；不会收集手机号、身份证等个人信息。
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       9. Footer 页脚：版权声明 + 年份
+       ============================================================ -->
+  <footer class="site-footer">
+    <div class="container">
+      <!-- 年份由 JS 动态填充；版权文案单独标记，切换语言时只替换文案 -->
+      <p>© <span id="year">2026</span> <span data-i18n="footer.copyright">王天睿 · 保留所有权利</span></p>
+      <p class="footer-note" data-i18n="footer.note">本项目为课程作业 V1 版本，仅用于学习交流。</p>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       10. 动画光标图层（跟随鼠标显示 APNG 动图）
+       说明：CSS 的 cursor 属性无法播放动图（APNG / GIF 只会显示第一帧），
+             所以真正的动画交给这个跟随鼠标的图层来显示；
+             图层不拦截任何点击（pointer-events: none），
+             系统光标只在 JS 成功启用后才会隐藏，见 js/main.js 功能 5。
+       ============================================================ -->
+  <div class="cursor-follow" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       11. Supabase JS Client（CDN 引入，V5 新增）
+       ------------------------------------------------------------
+       说明：
+       · 本项目没有 npm / 打包流程，所以按官方文档用 CDN 引入 supabase-js。
+         这个地址给的是 UMD 版本，加载后会挂到全局 window.supabase，
+         js/main.js 的「功能 8」直接用它提交反馈。
+       · 必须放在 js/main.js 之前：脚本按顺序执行，
+         否则 main.js 里的 window.supabase 还不存在。
+       · 这里只引入「客户端 SDK」，不放任何密钥。
+         项目地址与 anon key 写在 js/main.js 功能 8 顶部（需你手动替换）。
+         严禁把 service_role key 写进前端 —— 它不受 RLS 限制。
+       ============================================================ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- 引入主脚本（相对路径），放在 body 末尾以便 DOM 加载完成后再执行 -->
+  <script src="js/main.js"></script>
+</body>
+</html>
