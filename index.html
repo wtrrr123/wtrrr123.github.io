@@ -134,44 +134,11 @@
       </div>
     </section>
 
-    <!-- ============================================================
-         6. 网易云歌单 section：标题 + iframe 嵌入 + 说明
-         ============================================================
-         【如何替换为自己的公开歌单】
-         1. 打开网易云音乐网页版，找到你的某个公开歌单。
-         2. 点击歌单里的「生成外链播放器」；
-         3. 复制 iframe 代码，把其中 id=后面的数字换成你自己的歌单ID；
-         4. 把下面 iframe 替换成你复制到的代码，即可显示你的歌单。
-
-         超简单方法：只需要把下面 id= 后的数字改成你的歌单ID（type=0 表示歌单，不要改）。
-         当前使用的是王天睿的歌单 ID：18388731081。
-         ============================================================ -->
     <section id="music" class="section">
       <div class="container">
         <h2 class="section-title" data-i18n="music.title">我的音乐歌单</h2>
-        <p class="section-desc" data-i18n="music.desc">
-          这里是我在网易云音乐收藏的公开歌单，播放器只做静态嵌入展示（V1 不做复杂控制）。
-          喜欢听歌，音乐让生活有了节奏感。
-        </p>
-
-        <!-- 网易云公开歌单 iframe 嵌入（外链播放器），type=0 代表歌单 -->
-        <!-- 重要：src 必须以完整的 https:// 开头。若写成 //music.163.com，
-             用本地 file:// 双击打开时会被浏览器解析成 file://music.163.com，导致播放器无法加载。 -->
-        <!-- 现在使用的是王天睿自己的歌单（ID：18388731081）；如需更换，改下面的 id= 即可，height 也可按需调整 -->
-        <div class="music-embed">
-          <iframe
-            class="music-frame"
-            src="https://music.163.com/outchain/player?type=0&id=18388731081&auto=0&height=430"
-            frameborder="no"
-            scrolling="no"
-            style="width: 100%; height: 430px;"
-            title="网易云音乐歌单播放器">
-          </iframe>
-        </div>
-        <!-- 兜底链接：若浏览器或网络拦截第三方 iframe，可直接跳转到网易云歌单页 -->
-        <p class="music-fallback" data-i18n="music.fallback">
-          播放器无法显示？<a href="https://music.163.com/#/playlist?id=18388731081" target="_blank" rel="noopener">点此在网易云音乐中打开我的歌单 →</a>
-        </p>
+        <p class="section-desc" data-i18n="music.desc">这里展示我收藏的网易云歌单中的部分歌曲。</p>
+        <div id="music-display"></div>
       </div>
     </section>
 

@@ -1,0 +1,2375 @@
+/* =============================================================
+   个人主页 V1 · 全局样式
+   设计基调：吉伊卡哇主题（奶油粉 + 低饱和天蓝，V4 起全站主题化）
+   说明：本文件含注释，方便后续 V2 / V3 修改迭代。
+   主题开关：V4 的全部改动集中在文件末尾「第 20 节」，
+             想回到 V3.1 的冷调蓝白，整段删掉第 20 节即可。
+   -------------------------------------------------------------
+   更新记录
+   · V1.1 仅布局留白优化：调整 margin / padding / gap，缓解拥挤。
+   · V1.5 自定义光标（乌波主题，见第 17、17.1 节）：
+        默认悬浮为「普通（蓝）乌波」、鼠标按下切换为「异色（粉）乌波」，
+        两张图均为 59×47 的 APNG 动图（各 79 帧、无限循环），热点沿用 12,12；
+        图片加载失败时自动回退系统光标。
+        规则为「本地 assets/ 图片 → 52poke 外链 → 系统光标」三段回退：
+        assets/wooper-default.png 与 assets/wooper-active.png 已就位即生效。
+   · V1.6 动画光标显示方式改造（图片实为动图）：
+        问题：CSS 的 cursor 属性不支持动图，APNG / GIF 只会显示第一帧，
+              写在 cursor 里看起来就是一张「不动」的静态图。
+        做法：第 17 节保留静态 cursor 作为回退，新增 17.1 跟随图层
+              （元素见 index.html 的 .cursor-follow，跟随逻辑见 js/main.js 功能 5），
+              用 requestAnimationFrame 跟随鼠标播放 APNG，并隐藏系统光标。
+        取舍：触屏设备与系统「减少动态效果」下不启用，自动退回静态光标；
+              脚本未执行时不会隐藏系统光标，页面始终有光标可用。
+   · V1.7 Chiikawa 小八装饰强化 + 视觉层级统一（只改本文件）：
+        1) 小八从「抽象 CSS 色块」升级为「图片占位容器」——
+           Hero 右下角 120px、每张项目卡片右上角 40px、联系我侧边 60px，
+           三处都指向 assets/hachiware.png，放入真实 PNG 即显示形象（见第 15 节）；
+        2) 移动端（< 768px）三处装饰用 calc 统一缩放到 60%（72 / 24 / 36px），
+           位置仍落在容器留白区，不遮挡内容、不产生横向滚动条（见 15.3）；
+        3) 卡片角标补齐为「每一张项目卡片都有」（上一版只有第 1 / 第 3 张）；
+        4) 按钮 hover 上浮统一到 2px 并补按压缩放；卡片浅蓝细边框 / 轻阴影、
+           技能标签浅蓝底统一改用变量；新增字号 / 字重变量与第 18 节层级总表。
+        约束：未改动 HTML 结构、模块顺序、文字内容与网易云歌单模块；
+              未改动第 17 / 17.1 节乌波光标、16.0 节汉堡菜单逻辑。
+   · V1.8 小八图片正式就位（只改本文件 + 新增一张图片素材）：
+        1) 新增 assets/hachiware.png —— 小八（吉伊卡哇）透明背景 PNG，
+           189×189、RGBA、非动图；
+        2) 第 15 节三个容器从「占位虚线框」切换为真实图片：
+           Hero 120px 与联系侧边 60px 显示全身，
+           卡片角标 40px 只取头部特写（40px 下全身看不清表情，
+           改用 background-size / background-position 对焦头部，
+           该偏移量随容器尺寸按比例缩放，移动端 24px 时同样成立）；
+        3) 投影由 box-shadow 改为 drop-shadow —— 沿角色轮廓投影，
+           不会出现暴露容器边界的方形影子；
+        4) 三处仍为纯 CSS 伪元素，未新增 HTML 标签，
+           未改动第 17 / 17.1 节光标与 16.0 节汉堡菜单。
+   · V1.9 小八图片换新版并发现 / 修掉一个隐患（只改本文件 + 图片素材）：
+        1) 用户提供三张新素材，第 15 节改为「三处各用一张」：
+           A. Hero 120px   → hachiware-hero.png（群像，内容最丰富，
+                              放在最大位置）
+           B. 卡片角标 40px → hachiware-badge.png（搞笑图头部特写）
+           C. 联系侧边 60px → hachiware-contact.png（单只微笑小八）
+           公共规则不再写 background-image，改由 A / B / C 三段各自指定，
+           避免三段互相覆盖；
+        2) 角标焦点按新图重新量测：原图 282×282，头 + 蝴蝶结约在
+           x 74–231 / y 92–249，故取 background-size: 180%、
+           background-position: 59% 73%（显示约 157px 区域，
+           该取景随容器尺寸等比缩放，移动端 24px 时同样成立）；
+        3) 重要修正：爱给网免费下载的 PNG 其实是「棋盘格浮水印预览版」，
+           四张图的 alpha 全为 255（不透明），直接使用会让装饰显示成
+           灰白格子方块（V1.8 上线的那张同样中招）；现已用 flood fill
+           从边界连通区去背（容差 14、亮度 ≥ 215），角色内部的白色
+           （脸 / 身体）被黑色轮廓包围，因此完整保留；
+        4) 四张图（含备用图）都已去背并同步到 outputs/assets/。
+   · V2 细节质感 + 克制轻动态（只改本文件，未动 HTML 与 js/main.js）：
+        背景 / 圆角：末端背景色 #f5f8fc → #f7fbff（极淡蓝白渐变）；
+        圆角收敛为三级体系 —— 卡片 12px、按钮 8px、区块容器 16px
+        （区块圆角由内层 .container 的极淡白面承载，见第 3 节）；
+        阴影升级为三层「低透明度叠加」（靠层次而非加深出体积）；
+        卡片 hover 边框亮一档（--card-border-hover），
+        页脚实线改为淡蓝渐变细横线；
+        按钮 hover 上浮 2px + scale(1.03)、按压 scale(0.97)，
+        全站过渡统一到 0.2–0.25s ease-out；
+        导航：hover 变色 + 底部下划线 scaleX 滑入；
+        顶栏用纯 CSS 滚动驱动动画实现「滚动浮出白底 + 轻微模糊」（见第 6 节）；
+        排版：大标题字距 + 极低透明度淡蓝光晕，二 / 三级标题字距微调；
+        歌单：容器与卡片同圆角 / 同阴影，iframe 去边框并裁掉边角溢出；
+        小八：首屏装饰加载后微弱淡入一次（@keyframes hachi-hero-in）。
+        约束：行高按确认保留 1.7（规格建议的 1.6 未采用）；
+               技能标签与语言切换仍为胶囊形（规格未涉及，未改动）；
+               第 17 / 17.1 节乌波光标与 16.0 节汉堡菜单未改动；
+               新增动画均有移动端与「减少动态效果」兜底。
+    · V4 Chiikawa 全站主题化（只改本文件 + 新增 10 张贴图动图）：
+        1) 配色：由「冷调蓝白」改为吉伊卡哇的「奶油粉 + 天蓝」——
+           页面背景自上而下「暖奶油 → 淡粉 → 天蓝」，
+           新增 --accent-* 一组粉色变量（腮红粉 #f3a0bc），
+           主蓝微调为 #5f93d8，卡片边框 / 阴影一并转暖调；
+           正文 --text / --text-muted 同步转暖，对比度仍达 WCAG AA
+           （--text 10.6:1、--text-muted 5.4:1，均为白底实测值）；
+        2) 软萌圆角：卡片 12 → 16px、按钮 8 → 12px、区块容器 16 → 20px，
+           仍是一处变量控制全站（--card-radius / --btn-radius /
+           --section-radius），想收敛回去只改这三个值；
+        3) 角色贴图：新增 10 张吉伊卡哇动图（吉伊 / 小八 / 乌萨奇 /
+           栗子馒头），全站共 17 个落点 ——
+           Hero 群像、3 张项目卡片角标、关于我、技能、音乐、数字分身、
+           联系我、页脚、品牌名旁、以及每个二级标题右侧的小图标；
+           全部由 CSS 伪元素承载（未新增 HTML 标签、未改 index.html），
+           统一 pointer-events: none，不拦截任何交互；
+        4) 微动态：新增 @keyframes sticker-bob，
+           用独立的 translate 属性做 6px 上下浮动（与 transform 互不干扰，
+           所以联系我侧边的垂直居中、Hero 的淡入都不受影响）；
+           Hero 沿用 hachi-hero-in 淡入，其余贴图错峰浮动；
+        5) 细节：二级标题装饰条改「粉 → 蓝」渐变、Hero 姓名改渐变字
+           （@supports 包裹，不支持时退回纯色粉）、页脚分隔线改粉蓝渐变、
+           弹幕展示带底色改粉蓝渐变、奇数位标签改粉色一档；
+        6) 第 15 节 A / B / C 三处的图片换成同名风格的新动图
+           （Hero 群像 / 卡片角标 / 联系我），尺寸与避让逻辑完全沿用，
+           原三张小八 PNG 保留在 assets/ 中未删除，随时可换回；
+        7) V4 全部规则集中在文件末尾「第 20 节」，第 1–19 节保持原样，
+           便于对照与回退；只改 UI，未动任何功能逻辑，
+           js/main.js 一行未改（弹幕 / 光标 / 汉堡菜单 / 歌单播放器全部原样）。
+        约束：未改动 index.html（结构、模块顺序、文字内容全部原样）；
+               未改动第 17 / 17.1 节乌波光标、16.0 节汉堡菜单、
+               第 19 节弹幕滚动逻辑与网易云歌单 iframe；
+               装饰层不遮挡正文 / 按钮 / iframe，不产生横向滚动条；
+               移动端（< 768px）隐藏新增的 6 处小贴图、其余按 0.6 缩放；
+               「减少动态效果」下所有贴图停止浮动，仅静态显示。
+    · V5 访客反馈表单（配套改动 index.html 与 js/main.js）：
+        1) 新增第 21 节，全部规则集中在文件末尾，第 1–20 节一行未动，
+           要回退只删第 21 节即可；
+        2) 不新增设计语言：卡片沿用 .card、按钮沿用 .btn / .btn-primary /
+           .btn-outline、区块沿用 .section 与 .container、标题沿用
+           .section-title / .section-desc，颜色全部取自 :root 变量
+           （含 V4 的 --accent-*），以后改主题色这里会自动跟随；
+        3) 表单控件：输入框 / 多行文本框统一 12px 圆角（--btn-radius）、
+           内边距 12px 14px、字号 --fs-body、行高继承 1.7；
+           focus 用主题蓝描边 + 3px 淡蓝光晕（--primary-soft）；
+           文本框可纵向拖拽（resize: vertical）、最小高度 132px；
+        4) 提交中：按钮加 .is-loading —— 主色加深 + 透明度 0.9，
+           右侧 13px 圆环由 currentColor 驱动、border-top 透明后旋转，
+           同时 cursor: progress 且 pointer-events: none 防重复点击；
+           .btn 原本没有伪元素，因此新增 ::after 不影响其它按钮；
+        5) 状态提示 .form-status 用「文字 + 颜色」双重表达（成功 #2e7d5b、
+           失败 #b83a5a、提交中 --text-muted），空内容时 display: none，
+           不会留下空白间距；不靠单一色相区分，弱视 / 色盲仍可分辨；
+        6) 移动端（< 768px）：按钮组转纵向排列且宽度 100%，
+           输入框 / 文本框 / 表单本体均以 width:100% + max-width:100% +
+           box-sizing: border-box 三重约束，任何宽度都不产生横向滚动条；
+        7) 「减少动态效果」下：去掉输入框过渡、关闭圆环旋转动画
+           （改为静态不透明细环），信息仍由文案传达。
+        约束：未改动第 1–20 节任何一行；
+                未改动第 17 / 17.1 节乌波光标、16.0 节汉堡菜单、
+                第 19 节弹幕滚动与网易云歌单 iframe、第 20 节 V4 主题；
+                表单不引入新的字体 / 阴影体系，视觉与全站一致。
+    · V1.4 小屏导航汉堡菜单（配套改动 index.html 与 js/main.js）：
+       1) 屏幕宽度 < 768px 时，导航收起为右侧汉堡按钮，点击展开 / 收起；
+       2) 展开后是顶栏下方的通栏下拉面板，菜单项纵向排列、点击区更大，
+          矮视口（横屏）下菜单自身可滚动；
+       3) 桌面端完全不受影响：按钮隐藏、导航照常完整展示；
+       4) 展开态标记、Esc 关闭、点击外部关闭、语言切换后标签同步
+          等交互由 js/main.js 处理。
+   · V1.3 细节体验优化（与 js/main.js 配套，未改动 HTML 结构与模块顺序）：
+       1) 锚点平滑滚动，并自动让出吸顶导航栏高度（scroll-margin-top），
+          系统「减少动态效果」时自动关闭平滑；
+       2) 项目卡片 hover 轻微上浮（-2px → -6px），触屏设备不生效；
+       3) 手机上按视口高度收敛网易云歌单 iframe 高度，避免高度异常；
+       4) Chiikawa 小八装饰补齐 900px / 720px / 430px 三档缩小，
+          始终不遮挡内容，并在卡片 hover 时轻微浮动。
+   · V1.2 蓝白视觉深化：
+       1) 按钮 hover 过渡（上浮 + 淡蓝投影）；
+       2) 卡片统一浅蓝细边框 + 双层柔和阴影，hover 轻微抬起；
+       3) 技能标签使用浅蓝底色（低饱和）；
+       4) 统一标题 / 正文的字号与字重层级，并提高次要文字对比度；
+       5) 新增 Chiikawa 小八（哈奇猫）CSS 简易图形装饰
+          （Hero 右下角 + 第 1 / 第 3 个项目卡片右上角），
+          全部由伪元素绘制，不改动 HTML 结构、不拦截点击、不遮挡内容。
+   约束：背景仍为白色，配色保持低饱和蓝白，未使用高饱和蓝；
+         除 Header 内新增的汉堡按钮（及其小屏下拉菜单）外，
+         未改动其它模块的 HTML 结构；导航在桌面端的展示保持不变；
+         V1.5 起全站光标为乌波主题（纯 CSS 实现，未改动 HTML）。
+   ============================================================= */
+
+/* ---------- 1. 全局变量（统一配色，方便调整主题） ---------- */
+:root {
+  /* 页面背景：白色到极浅蓝过渡（V2：末端色按规格由 #f5f8fc 提亮为 #f7fbff，
+     两端差值更小，只留下「上白、下微蓝」的极淡层次） */
+  --bg: #ffffff;
+  --bg-soft: #f7fbff;
+
+  /* 主色：柔和低饱和蓝色，用于按钮、强调、卡片边框 */
+  --primary: #5b8cd6;
+  --primary-dark: #4a78bf;
+  --primary-soft: #eaf1fb;       /* 淡蓝色装饰/图标背景 */
+  --primary-border: #d7e3f5;     /* 淡蓝色边框 */
+
+  /* 文字颜色：正文深灰、次要灰蓝，避免纯黑 */
+  --text: #3a4454;
+  --text-muted: #657389;         /* 视觉深化：由 #93a0b2 加深，白底约 4.8:1，保证次要正文可读性 */
+  /* 视觉深化：蓝色文字专用色（链接 / 标签 / 小号蓝字），
+     白底约 5.2:1、浅蓝底约 4.7:1，均达到 WCAG AA 正文对比度标准 */
+  --primary-text: #3f6db0;
+  --primary-text-dark: #345d99;  /* 蓝色文字的 hover / 激活态，更深以维持对比度 */
+
+  /* 卡片 */
+  --card-bg: #ffffff;
+  --card-border: #dbe7f8;        /* 视觉深化：柔和浅蓝细边框 */
+  --card-border-hover: #b9d2f4;  /* V2：hover 时「淡蓝亮度提高一档」（仍是低饱和蓝，不发灰） */
+  --card-radius: 12px;           /* V2 圆角规格：卡片 12px（由 14px 收敛一档，更利落） */
+  /* V2 圆角规格（三级体系）：卡片 12px / 按钮 8px / 区块容器 16px */
+  --btn-radius: 8px;
+  --section-radius: 16px;
+  /* V2：三层柔和阴影 —— 近距细影 + 中距过渡 + 远距弥散，
+     每层透明度都压得很低，靠「叠层」而不是靠「加深」来出体积，
+     因此不会出现厚重黑阴影；hover 时三层同步适度放大。 */
+  --card-shadow: 0 1px 2px rgba(91, 140, 214, 0.05),
+                 0 5px 12px rgba(91, 140, 214, 0.05),
+                 0 14px 30px rgba(91, 140, 214, 0.07);
+  --card-shadow-hover: 0 2px 6px rgba(91, 140, 214, 0.08),
+                       0 10px 22px rgba(91, 140, 214, 0.10),
+                       0 22px 44px rgba(91, 140, 214, 0.12);
+
+  /* Chiikawa 小八装饰配色（低饱和蓝白；仅用于「图片未放入」时的占位外观，
+     放入真实小八 PNG 后这些颜色就不再参与显示） */
+  --hachi-blue: #b7d2f2;         /* 头顶蓝色 */
+  --hachi-blue-deep: #8fb6e6;    /* 耳朵蓝色 */
+  --hachi-line: #d9e6f8;         /* 轮廓描边 / 占位虚线框 */
+  --hachi-eye: #4a5568;          /* 眼睛深灰 */
+
+  /* V1.7 小八装饰尺寸（三处装饰「一处改、全站生效」的开关） */
+  --hachi-hero: 120px;           /* A. Hero 首屏右下角（需求上限 120px） */
+  --hachi-badge: 40px;           /* B. 项目卡片右上角标（需求区间 35–45px，取中值） */
+  --hachi-contact: 60px;         /* C. 联系我模块侧边 */
+  --hachi-mobile-scale: 0.6;     /* 移动端（< 768px）统一缩放比例：60% */
+
+  /* V1.7 字号层级（全站只从这里取值，避免各模块零散硬写数值） */
+  --fs-h1: 2.1rem;               /* 一级标题：Hero 姓名 */
+  --fs-h2: 1.6rem;               /* 二级标题：区块标题 */
+  --fs-h3: 1.12rem;              /* 三级标题：卡片标题 / 小标题 */
+  --fs-body: 1rem;               /* 正文 */
+  --fs-sm: 0.95rem;              /* 次要正文：说明、描述、按钮、导航 */
+  --fs-note: 0.9rem;             /* 注脚：播放器兜底说明、页脚 */
+  --fs-tag: 0.85rem;             /* 标签 */
+  --fs-xs: 0.82rem;              /* 最小注脚：语言按钮、页脚第二行 */
+
+  /* V1.7 字重层级（四档，与上面的字号配套） */
+  --fw-bold: 700;                /* 标题 */
+  --fw-semibold: 600;            /* 卡片标题、信息标签 */
+  --fw-medium: 500;              /* 按钮、导航、标签 */
+  --fw-regular: 400;             /* 正文 */
+
+  /* 布局 */
+  --container-max: 1000px;
+  --content-gap: 32px;           /* 留白优化：卡片间距 24px → 32px */
+}
+
+/* ---------- 2. 基础重置与通用 ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  /* 体验优化：点击导航锚点后平滑滚动；
+     系统开启「减少动态效果」时，由文件末尾的媒体查询自动关闭 */
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: var(--fs-body);     /* 视觉深化：显式正文基准字号，统一层级（V1.7 改用变量） */
+  /* 背景：上方纯白，向下极淡过渡到 #f7fbff（V2 规格的极淡蓝白渐变） */
+  background: linear-gradient(180deg, #ffffff 0%, var(--bg-soft) 100%);
+  color: var(--text);
+  /* V2 规格建议正文行高 1.6；经确认这里保留更透气的 1.7（想改回只需动本行数值） */
+  line-height: 1.7;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--primary-text);    /* 视觉深化：链接用对比度达标的蓝，避免过浅看不清 */
+  text-decoration: none;
+}
+a:hover {
+  color: var(--primary-text-dark);
+}
+
+ul {
+  list-style: none;
+}
+
+/* 页面内容容器：居中 + 最大宽度 + 左右留白 */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 24px;               /* 留白优化：左右内边距 20px → 24px */
+}
+
+/* ---------- 3. 通用区块 ---------- */
+/* V2 圆角规格：区块容器 16px。
+   区块本身是通栏透明的，直接加圆角「看不见」，
+   所以同时给区块内层 .container 一层极淡白面（55% 白、无边框、
+   无阴影），让 16px 圆角真正可见，又不会抢内容。
+   留白总量不变：区块 38px + 容器 34px = 72px，与 V1 的 72px 等值。 */
+.section {
+  padding: 38px 0;
+  /* 体验优化：锚点跳转时自动让出吸顶导航栏（高 68px）的空间，
+     区块标题不会被顶栏压住；未启用 JS 的原生 hash 跳转同样受益 */
+  scroll-margin-top: 84px;
+  border-radius: var(--section-radius);  /* V2：区块圆角 16px */
+}
+/* V2：区块内层容器 —— 极淡白面 + 16px 圆角（圆角可见的载体） */
+.section > .container {
+  border-radius: var(--section-radius);
+  background: rgba(255, 255, 255, 0.55);
+  padding-top: 34px;
+  padding-bottom: 34px;
+}
+
+/* 视觉深化：二级标题统一为 --fs-h2 / --fw-bold（V1.7 变量化） */
+.section-title {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-bold);
+  line-height: 1.4;
+  margin-bottom: 24px;           /* 留白优化：标题与内容间距 18px → 24px */
+  color: var(--text);
+  letter-spacing: 0.01em;        /* V2：二级标题字距轻微放宽 */
+  /* 标题左侧加一个淡蓝色装饰条 */
+  position: relative;
+  padding-left: 14px;
+}
+.section-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 4px;
+  border-radius: 4px;
+  background: var(--primary);
+  opacity: 0.6;
+}
+
+/* 视觉深化：区块说明统一为次要正文级别（--fs-sm / --fw-regular） */
+.section-desc {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-regular);
+  margin-bottom: 28px;           /* 留白优化：说明文字与内容间距 20px → 28px */
+  max-width: 640px;
+  line-height: 1.75;             /* 留白优化：说明文字行距略放宽 */
+}
+
+/* 视觉深化：三级小标题统一为 --fs-h3 / --fw-semibold（V1.7 变量化） */
+.sub-title {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  line-height: 1.5;
+  margin: 22px 0 14px;           /* 留白优化：小标题上下间距放宽 */
+  color: var(--text);
+  letter-spacing: 0.008em;       /* V2：三级标题字距轻微放宽 */
+}
+
+/* 留白优化：卡片内首个「技能 / 兴趣」小标题不再叠加多余的顶部间距 */
+.card .sub-title:first-child {
+  margin-top: 0;
+}
+
+/* ---------- 4. 通用卡片 ---------- */
+/* V1.7：卡片视觉统一为「柔和浅蓝细边框 + 轻微双层阴影」，
+   边框与阴影全部走变量（--card-border / --card-shadow），
+   改主题只需动 :root 一处，卡片、歌单容器、页脚分隔线会一起变化。 */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);   /* 视觉深化：柔和浅蓝细边框 */
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);         /* 视觉深化：双层柔和阴影（轻） */
+  padding: 32px;                 /* 留白优化：卡片内边距 26px → 32px */
+  /* V2：统一过渡节奏 —— 0.25s ease-out（只动阴影 / 边框 / 位移，不触发重排） */
+  transition: box-shadow 0.25s ease-out,
+              border-color 0.25s ease-out,
+              transform 0.25s ease-out;
+}
+
+/* 视觉深化：卡片 hover 轻微抬起、边框略亮、阴影加深（不改结构、不挤压文字）
+   V2：边框改用 --card-border-hover（比常态亮一档的淡蓝），三层阴影同步放大 */
+.card:hover {
+  border-color: var(--card-border-hover);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* 居中的卡片（数字分身入口用） */
+.card-center {
+  text-align: center;
+}
+
+/* ---------- 5. 按钮 ---------- */
+.btn {
+  display: inline-block;
+  padding: 12px 26px;            /* 留白优化：按钮内边距 10px 22px → 12px 26px */
+  /* V2 圆角规格：按钮 8px（由胶囊 999px 收敛为圆角矩形，纳入三级圆角体系） */
+  border-radius: var(--btn-radius);
+  font-size: var(--fs-sm);       /* V1.7：按钮字号统一取自变量 */
+  font-weight: var(--fw-medium); /* 视觉深化：按钮文字统一 500 */
+  cursor: pointer;
+  border: 1px solid transparent;
+  /* V2：统一过渡节奏 —— 0.22s ease-out，覆盖变色 / 投影 / 位移与缩放 */
+  transition: background-color 0.22s ease-out,
+              color 0.22s ease-out,
+              border-color 0.22s ease-out,
+              box-shadow 0.22s ease-out,
+              transform 0.22s ease-out;
+}
+
+/* 主按钮：蓝色实底 */
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(91, 140, 214, 0.18);
+}
+/* V1.7：hover 加深底色 + 上浮统一到 2px + 柔和蓝色投影；白字对比度同时提升。
+   hover / active 只动 transform 与 box-shadow，不改变占位、不推动周围元素 */
+.btn-primary:hover {
+  background: var(--primary-dark);
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(91, 140, 214, 0.32);
+  /* V2：在原上浮 2px 的基础上叠加极小 scale(1.03)，幅度刻意压小不显夸张 */
+  transform: translateY(-2px) scale(1.03);
+}
+/* V2 按压缩放：位移归零 + scale(0.97)，只给一点「按下去」的反馈（不抖动） */
+.btn-primary:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 2px 8px rgba(91, 140, 214, 0.28);
+}
+.btn-primary:disabled {
+  background: #b9c9e3;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 描边按钮：白底 + 蓝边框 */
+.btn-outline {
+  background: #ffffff;
+  color: var(--primary-text);    /* 视觉深化：白底描边按钮改用对比度达标的蓝字 */
+  border-color: var(--primary-border);
+  box-shadow: 0 2px 6px rgba(91, 140, 214, 0.10);
+}
+/* V1.7：hover 填充浅蓝 + 边框转主蓝 + 上浮 2px（与主按钮手感保持一致） */
+.btn-outline:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary-text-dark);
+  box-shadow: 0 8px 18px rgba(91, 140, 214, 0.18);
+  /* V2：与主按钮手感一致 —— 上浮 2px + scale(1.03) */
+  transform: translateY(-2px) scale(1.03);
+}
+/* V2 按压缩放：与主按钮统一为 scale(0.97) */
+.btn-outline:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 2px 6px rgba(91, 140, 214, 0.14);
+}
+
+/* 视觉深化：键盘聚焦时给出淡蓝可见轮廓（纯样式，不新增功能） */
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ---------- 6. Header 顶部导航 ---------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9); /* 半透明白，滚动时轻微透出背景 */
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--card-border); /* 视觉深化：与卡片同色系细线 */
+}
+
+/* =============================================================
+   V2 细节：导航栏「滚动才浮出」的分层效果（纯 CSS，未改 JS）
+   -------------------------------------------------------------
+   规格要求：滚动页面时顶栏出现极淡半透明白底 + 轻微模糊；
+             回到顶部恢复完全透明。
+   实现：用 CSS 滚动驱动动画（scroll-driven animation），把
+         「页面滚动 0 → 140px」的进度映射成顶栏的底色 / 模糊 / 下边线，
+         全程不需要 JS 监听滚动，因此 js/main.js 一行都不用动。
+   兜底：不支持 animation-timeline 的浏览器整块跳过，
+         顶栏保持上面那条「半透明白 + 模糊」的现状，不会变丑；
+         移动端（< 768px）不启用，避免滚动时反复重绘模糊层。
+   ============================================================= */
+@keyframes header-frost {
+  to {
+    background-color: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom-color: var(--card-border);
+  }
+}
+@supports (animation-timeline: scroll()) {
+  @media (min-width: 768px) {
+    .site-header {
+      /* 顶部：底色全透明、无模糊、无下边线 */
+      background-color: rgba(255, 255, 255, 0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      border-bottom-color: rgba(219, 231, 248, 0);
+      animation-name: header-frost;
+      animation-duration: 1s;        /* 进度型时间轴下时长不参与计算，仅满足语法 */
+      animation-timing-function: linear;
+      animation-fill-mode: both;     /* 填充模式：滚回顶部也会退回全透明 */
+      animation-timeline: scroll();
+      animation-range: 0px 140px;
+    }
+  }
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 68px;                  /* 留白优化：顶栏高度 64px → 68px，更宽松 */
+}
+
+/* 品牌：字母徽标头像 + 名称 */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+.brand-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  /* 视觉深化：极浅蓝渐变 + 细边框，与标签/头像统一蓝白质感 */
+  background: linear-gradient(180deg, #f2f7fd 0%, #e6effb 100%);
+  color: var(--primary-text);    /* 视觉深化：浅蓝底上保持可读的蓝字 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: var(--fw-bold);
+  border: 1px solid var(--card-border);
+}
+
+/* 导航菜单 */
+.nav-list {
+  display: flex;
+  gap: 26px;                     /* 留白优化：导航项间距 22px → 26px */
+}
+.nav-list a {
+  position: relative;            /* V2：作为下划线伪元素的定位参照 */
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium); /* 视觉深化：导航字重统一 500 */
+  transition: color 0.2s ease-out;  /* V2：统一 0.2s ease-out 过渡 */
+}
+/* V2 细节：桌面端导航 hover —— 文字变色 + 底部短淡蓝下划线「滑入」。
+   用 scaleX 从左向右展开：transform 不参与布局，
+   不会推动相邻导航项，也不会造成文字抖动。 */
+.nav-list a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary);
+  opacity: 0.85;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.22s ease-out;
+}
+.nav-list a:hover {
+  color: var(--primary-text);
+}
+.nav-list a:hover::after,
+.nav-list a:focus-visible::after {
+  transform: scaleX(1);
+}
+/* 小屏（< 768px）导航收进汉堡下拉面板，面板里不加下划线，保持干净 */
+@media (max-width: 767.98px) {
+  .nav-list a::after {
+    display: none;
+  }
+}
+
+.header-cta {
+  flex-shrink: 0;
+}
+
+/* 移动端汉堡按钮：桌面端默认隐藏，只在 < 768px 显示（样式见 16.0 断点） */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;                      /* 与 2px 高的横线组合出 6px 行距 */
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.nav-toggle:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary-border);
+}
+.nav-toggle:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 三条横线：纯 CSS 绘制，不引入图标字体或图片 */
+.nav-toggle-bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--primary-text);
+  transition: transform 0.22s ease, opacity 0.18s ease;
+}
+
+/* 展开时三条线收成「×」：只动 transform / opacity，不引起布局抖动 */
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* 语言切换按钮组（简 / 繁 / EN） */
+.lang-switch {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;                  /* 留白优化：按钮组内边距 3px → 4px */
+  border: 1px solid var(--card-border); /* 视觉深化：统一浅蓝细边框 */
+  border-radius: 999px;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+.lang-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);       /* V1.7：最小注脚档 */
+  font-weight: var(--fw-medium);
+  line-height: 1;
+  padding: 7px 11px;             /* 留白优化：单个语言按钮 6px 10px → 7px 11px */
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.lang-btn:hover {
+  background: var(--primary-soft);
+  color: var(--primary-text);    /* 视觉深化：hover 用对比度达标的蓝 */
+}
+/* 当前选中的语言按钮 */
+.lang-btn.is-active {
+  background: var(--primary-soft);
+  color: var(--primary-text);
+  font-weight: var(--fw-semibold);
+}
+
+/* ---------- 7. Hero 首屏 ---------- */
+.hero {
+  text-align: center;
+  padding: 96px 0;               /* 留白优化：首屏上下留白 72px → 96px */
+}
+
+/* 视觉深化：作为右下角小八装饰的定位参照（不改动 HTML 结构） */
+.hero-inner {
+  position: relative;
+}
+
+.hero-avatar {
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 26px;           /* 留白优化：头像下间距 20px → 26px */
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f2f7fd 0%, #e6effb 100%); /* 视觉深化：蓝白渐变 */
+  border: 2px solid var(--card-border);
+  color: var(--primary-text);    /* 视觉深化：浅蓝底上保持可读的蓝字 */
+  font-size: 2.2rem;             /* 头像内文字：单处使用的展示级尺寸，不并入正文层级 */
+  font-weight: var(--fw-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 视觉深化：一级标题统一为 --fs-h1 / --fw-bold（V1.7 变量化） */
+.hero-name {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-bold);
+  line-height: 1.3;
+  margin-bottom: 16px;           /* 留白优化：标题下间距 12px → 16px */
+  /* V2 排版细节：大标题字距略微放宽 + 一层极低透明度的淡蓝光晕。
+     阴影偏移为 0、不加粗、透明度仅 0.12，只让标题更「立」一点，
+     不会把字形染蓝，也不会让文字发糊。 */
+  letter-spacing: 0.012em;
+  text-shadow: 0 0 18px rgba(91, 140, 214, 0.12);
+}
+.hero-name .highlight {
+  color: var(--primary);
+}
+
+.hero-tagline {
+  color: var(--text-muted);
+  font-size: var(--fs-body);     /* 视觉深化：与正文字号统一（V1.7 变量化） */
+  font-weight: var(--fw-regular);
+  max-width: 520px;
+  margin: 0 auto 26px;           /* 留白优化：简介下间距 20px → 26px */
+  line-height: 1.75;             /* 留白优化：简介行距略放宽 */
+}
+
+/* 标签组 */
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;                     /* 留白优化：标签间距 10px → 12px */
+  margin-bottom: 32px;           /* 留白优化：标签组下间距 26px → 32px */
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;                     /* 留白优化：按钮间距 14px → 16px */
+  flex-wrap: wrap;
+}
+
+/* ---------- 8. 标签通用样式 ---------- */
+/* 视觉深化：技能 / 兴趣标签统一使用浅蓝底色
+   （V1.7：底色与边框改为变量 --primary-soft / --primary-border，
+    与卡片、按钮共用同一套低饱和蓝；文字用深一档蓝保证 AA 对比度） */
+.tag {
+  background: var(--primary-soft);
+  color: var(--primary-text);    /* 视觉深化：浅蓝底上的蓝字保持 AA 对比度 */
+  border: 1px solid var(--primary-border);
+  padding: 8px 16px;             /* 留白优化：标签内边距 6px 14px → 8px 16px */
+  border-radius: 999px;
+  font-size: var(--fs-tag);
+  font-weight: var(--fw-medium); /* 视觉深化：标签字重统一 500 */
+  line-height: 1.5;
+  /* V2：统一过渡节奏 0.2s ease-out */
+  transition: background-color 0.2s ease-out,
+              border-color 0.2s ease-out,
+              transform 0.2s ease-out;
+}
+/* 视觉深化：轻微 hover 反馈（只改背景深浅 + 1px 上浮，不改变尺寸、不影响布局）
+   V2：位移固定为极小的 1px，主体是「颜色柔和变化」，不抖动 */
+.tag:hover {
+  background: #dfeafb;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;                     /* 留白优化：标签行间距 10px → 14px */
+}
+
+/* ---------- 9. 关于我 ---------- */
+.about-intro {
+  color: var(--text);
+  font-size: var(--fs-body);     /* 视觉深化：正文字号统一（V1.7 变量化） */
+  font-weight: var(--fw-regular);
+  margin-bottom: 22px;           /* 留白优化：介绍与信息行间距 16px → 22px */
+  line-height: 1.75;
+}
+.about-info {
+  display: grid;
+  gap: 12px;                     /* 留白优化：信息行间距 8px → 12px */
+  font-size: var(--fs-body);     /* 视觉深化：正文字号统一（V1.7 变量化） */
+}
+.about-label {
+  color: var(--primary-text);    /* 视觉深化：提升可读性 */
+  font-weight: var(--fw-semibold);
+  margin-right: 6px;             /* 留白优化：标签与内容间距 4px → 6px */
+}
+
+/* ---------- 10. 项目卡片 ---------- */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--content-gap);       /* 卡片间距已由变量统一提升到 32px */
+}
+.project-card {
+  display: flex;
+  flex-direction: column;
+  position: relative;            /* 视觉深化：作为右上角小八装饰的定位参照 */
+}
+/* 体验优化：项目卡片 hover 时比普通卡片多浮起一点（-2px → -6px），
+   配合加深的阴影形成「轻轻抬起」的悬浮感。
+   纯 transform 位移，不改变占位、不推动周围元素；
+   触屏设备在小屏断点中已被统一置为 transform: none。 */
+.project-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--card-border-hover);  /* V2：边框淡蓝亮度提高一档 */
+  box-shadow: var(--card-shadow-hover);    /* V2：三层阴影同步放大 */
+}
+/* 视觉深化：三级标题统一为 --fs-h3 / --fw-semibold（V1.7 变量化）
+   V2：字距轻微放宽；并让它在卡片 hover 时柔和变色（只变颜色，不位移、不抖动） */
+.project-title {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-semibold);
+  line-height: 1.5;
+  margin-bottom: 12px;           /* 留白优化：标题下间距 8px → 12px */
+  letter-spacing: 0.008em;
+  transition: color 0.2s ease-out;
+}
+.project-card:hover .project-title {
+  color: var(--primary-text-dark);
+}
+.project-desc {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);       /* 视觉深化：统一到次要正文级别（V1.7 变量化） */
+  font-weight: var(--fw-regular);
+  flex: 1; /* 让描述撑起高度，链接对齐到底部 */
+  margin-bottom: 20px;           /* 留白优化：描述与链接间距 14px → 20px */
+  line-height: 1.7;              /* 留白优化：描述行距略放宽 */
+}
+.project-link {
+  align-self: flex-start;
+  font-weight: var(--fw-semibold);
+  font-size: var(--fs-sm);
+  color: var(--primary-text);    /* 视觉深化：卡片内链接用对比度达标的蓝 */
+  transition: color 0.2s ease-out;   /* V2：卡片内链接 hover 只做柔和变色 */
+}
+.project-link:hover {
+  color: var(--primary-text-dark);
+}
+
+/* ---------- 12. 数字分身 ---------- */
+.twin-desc {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);       /* 视觉深化：统一到次要正文级别（V1.7 变量化） */
+  margin-bottom: 26px;           /* 留白优化：说明与按钮间距 18px → 26px */
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.75;             /* 留白优化：说明行距略放宽 */
+}
+
+/* ---------- 13. 联系我 ---------- */
+.contact-desc {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);       /* 视觉深化：统一到次要正文级别（V1.7 变量化） */
+  margin-bottom: 22px;           /* 留白优化：说明与列表间距 18px → 22px */
+}
+.contact-list {
+  display: grid;
+  gap: 20px;                     /* 留白优化：联系方式行间距 14px → 20px */
+  font-size: var(--fs-body);     /* 视觉深化：正文字号统一（V1.7 变量化） */
+}
+.contact-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.contact-label {
+  min-width: 110px;
+  color: var(--primary-text);    /* 视觉深化：提升可读性 */
+  font-weight: var(--fw-semibold);
+}
+
+/* ---------- 14. Footer 页脚 ---------- */
+.site-footer {
+  /* V2 细节：页脚分割线 —— 由实心细线改为「淡蓝渐变细横线」，
+     中间略深、两端淡出，比一条均色实线更轻更透气。
+     做法：不用 border，改用 1px 高的渐变背景条贴在顶部。 */
+  border-top: 0;
+  background-image: linear-gradient(
+    90deg,
+    rgba(91, 140, 214, 0) 0%,
+    rgba(91, 140, 214, 0.18) 50%,
+    rgba(91, 140, 214, 0) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  background-position: top center;
+  padding: 40px 0;               /* 留白优化：页脚上下留白 28px → 40px */
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--fs-note);     /* 视觉深化：注脚级字号统一（V1.7 由 0.88rem 并入 0.9rem 档） */
+  font-weight: var(--fw-regular);
+}
+.footer-note {
+  margin-top: 10px;              /* 留白优化：页脚两行间距 6px → 10px */
+  font-size: var(--fs-xs);       /* 视觉深化：最次要注脚再接一档（V1.7 变量化） */
+}
+
+/* =============================================================
+   15. Chiikawa 小八（哈奇猫）装饰 · 图片容器（图片已就位）
+   -------------------------------------------------------------
+   【V1.7 改成「图片容器」→ V1.8 / V1.9 图片已落位】
+   更早的版本用渐变叠出「白脸 + 蓝头带 + 圆耳 + 眼睛」的简易小八，
+   虽然能跑，但本质仍是抽象色块，辨识度有限、也不像真实角色。
+   V1.7 改为标准图片容器（位置、尺寸、响应式与避让逻辑全部就绪），
+   V1.8 换上第一张真实小八 PNG，V1.9 进一步升级为「三处各一张」。
+   -------------------------------------------------------------
+   【三处装饰的位置与尺寸（桌面）】
+     A. Hero 首屏右下角      .hero-inner::after      --hachi-hero     120px（需求上限 120px）
+     B. 项目卡片右上角角标    .project-card::after    --hachi-badge     40px（需求区间 35–45px，取中值）
+        —— 每一张项目卡片都有（上一版只有第 1 / 第 3 张，本轮补齐）
+     C. 联系我模块侧边        #contact .card::after   --hachi-contact   60px
+   【中等屏幕】≤ 900px 补一档过渡（88 / 34 / 48px），见 15.1。
+   【移动端】< 768px 三处统一 × 0.6（120 → 72px、40 → 24px、60 → 36px），见 15.3。
+   -------------------------------------------------------------
+   【图片已就位 · 三处各一张（V1.9）】
+   · 素材：小八（吉伊卡哇 / Chiikawa）透明背景 PNG，均为静态图；
+       A. assets/hachiware-hero.png    282×282  群像（三只角色）
+       B. assets/hachiware-badge.png   282×282  搞笑图（被苹果砸中）
+       C. assets/hachiware-contact.png 180×180  单只微笑小八
+     另有一张备用素材 assets/hachiware.png（189×189，举锯子的小八），
+     当前未被引用，想用时可把任意一段的 url() 换过去。
+   · 三处取景策略：
+       A. Hero 120px   —— 全身（background-size: contain）
+       B. 卡片角标 40px —— 头部特写（background-size: 180% + 焦点 59% 73%）
+       C. 联系侧边 60px —— 全身（background-size: contain）
+   · 换成自己的图片：把图存成同名文件覆盖即可（主样式表在 css/ 下，
+     所以规则里写 ../assets/…）；正方形图可直接沿用；若想让角标也
+     显示全身，把 B 段里的 background-size: 180% 与
+     background-position: 59% 73% 改回 contain 与 center 两行即可；
+   · 想更锐利可换 ≥ 480×480 的同款图（当前 282×282 在 120px 处长边
+     约 2.3 倍，普通屏与 2K 屏都清晰）；
+   · 素材处理说明：爱给网免费下载的 PNG 是带棋盘格浮水印的预览版
+     （alpha 全为 255，直接使用会显示成灰白格子方块），
+     已用 flood fill 从边界连通区去背；角色内部的白色（脸 / 身体）
+     因被黑色轮廓包围而完整保留。
+   -------------------------------------------------------------
+   【为什么不会遮挡内容、不会出现横向滚动条】
+   · pointer-events: none —— 装饰永不拦截点击 / 悬停 / 文本选择，
+     按钮、链接、语言切换、汉堡菜单、网易云 iframe 全部照常可用；
+   · A 落在首屏内容下方的留白里（首屏文案与按钮居中，右下角是空的），
+     且只做纵向偏移，水平方向不超出容器；
+   · B 落在卡片内边距区，并给卡片标题预留 padding-right 避让；
+   · C 落在联系卡片右侧留白（联系信息在左侧纵向排列，右侧是空白）；
+   · 三处全部用现有元素的伪元素实现，未新增任何 HTML 标签。
+   ============================================================= */
+.hero-inner::after,
+.project-card::after,
+#contact .card::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;          /* 关键：装饰不参与任何交互 */
+  /* ---- 小八图片（V1.9：三处各用一张，图片由下面的 A / B / C 段各自指定）----
+     公共部分只放「怎么显示」，不写 background-image，避免互相覆盖：
+     重复方式 / 默认居中 / 等比完整显示（B 段会单独覆盖成头部特写）。 */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;      /* 保持比例完整显示，不裁切、不变形 */
+  /* 投影用 drop-shadow 而不是 box-shadow：小八是透明背景的角色轮廓，
+     box-shadow 会画出一个「方框影子」暴露容器边界，
+     drop-shadow 则沿着身体轮廓投影，更干净自然。 */
+  filter: drop-shadow(0 4px 10px rgba(91, 140, 214, 0.20));
+  opacity: 0.96;
+  /* 只为 hover 位移预留过渡（只动 transform / opacity，不触发重排） */
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* ---------- A. Hero 首屏右下角（中等尺寸，上限 120px）----------
+   首屏内容整体居中：姓名、简介、标签、按钮都在中间，
+   右下角是空白区，所以 120px 也不会压住任何文字与按钮；
+   bottom 取负值，让小八稍微「坐」进首屏底部留白里，视觉更自然。 */
+/* V2 细节：Hero 小八「加载后微弱淡入一次」。
+   用 @keyframes + animation-fill-mode: both，动画结束后停在最后一帧
+   （opacity 0.96 / 无位移），不会回弹、不会闪烁；
+   只播一次（默认 iteration-count 为 1），不动其余装饰。 */
+@keyframes hachi-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 0.96;
+    transform: translateY(0) scale(1);
+  }
+}
+.hero-inner::after {
+  width: var(--hachi-hero);      /* 120px */
+  height: var(--hachi-hero);
+  right: 0;
+  bottom: -24px;
+  /* V2：延迟 0.2s、0.9s ease-out 淡入，幅度刻意很小（8px + 2% 缩放） */
+  animation: hachi-hero-in 0.9s ease-out 0.2s both;
+  /* 群像（小八 + 兔兔 + 栗子馒头）：内容最丰富、留白最少，
+     放在最大的位置上才不会糊（原图 282×282，透明背景） */
+  background-image: url("../assets/hachiware-hero.png");
+}
+/* V2 红线：移动端不增强动画 —— 首屏装饰直接静态显示，不淡入、不位移 */
+@media (max-width: 767.98px) {
+  .hero-inner::after {
+    animation: none;
+  }
+}
+
+/* ---------- B. 项目卡片右上角角标（40px，落在 35–45px 区间）----------
+   每一张项目卡片都有（本轮把第 2 张也补齐）；
+   位置落在卡片内边距区，标题另有 padding-right 避让。 */
+.project-card::after {
+  width: var(--hachi-badge);     /* 40px */
+  height: var(--hachi-badge);
+  top: 14px;
+  right: 14px;
+  opacity: 0.92;
+  /* 搞笑图（被苹果砸中那张，带对话框与日文）：右上角正好当角标，
+     而且它比群像更「抓眼」；但 40px 很小，显示全身会看不清表情，
+     所以这里用「头部特写」：
+       background-size: 180% → 容器里只显示原图中约 157px 的区域；
+       background-position: 59% 73% → 把焦点落到头部
+       （原图 282×282，内容约 x 12–266 / y 33–248，
+         头 + 蝴蝶结约 x 74–231 / y 92–249，腮红约 y 163–224） */
+  background-image: url("../assets/hachiware-badge.png");
+  background-size: 180%;
+  background-position: 59% 73%;
+}
+
+/* 给卡片标题预留右侧空间，确保角标不压住标题文字
+   （只加内边距，不改 HTML 结构、不影响换行） */
+.project-card .project-title {
+  padding-right: 52px;
+}
+
+/* ---------- C. 联系我模块侧边（60px）----------
+   .card 自身没有定位参照，这里补一句 position: relative；
+   联系信息在卡片左侧纵向排列，右侧留白正好放装饰。 */
+#contact .card {
+  position: relative;
+}
+#contact .card::after {
+  width: var(--hachi-contact);   /* 60px */
+  height: var(--hachi-contact);
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);   /* 垂直居中：落在卡片右侧中部 */
+  /* 单只微笑小八：构图干净、四周留白多，缩到 60px 也不糊
+     （原图 180×180，透明背景） */
+  background-image: url("../assets/hachiware-contact.png");
+}
+
+/* =============================================================
+   15.1 小八装饰 · 中等屏幕（≤ 900px）逐级缩小
+   说明：在「桌面 → 手机」之间补一档过渡，避免平板 / 窄窗口下
+   装饰相对偏大；同时收紧标题避让空间（仍大于角标宽度，不压文字）。
+   ============================================================= */
+@media (max-width: 900px) {
+  .hero-inner::after {
+    width: 88px;
+    height: 88px;
+    right: 0;
+    bottom: -18px;
+  }
+  .project-card::after {
+    width: 34px;
+    height: 34px;
+    top: 12px;
+    right: 12px;
+  }
+  .project-card .project-title {
+    padding-right: 46px;
+  }
+  #contact .card::after {
+    width: 48px;
+    height: 48px;
+    right: 14px;
+  }
+}
+
+/* =============================================================
+   15.2 卡片 hover：角标跟随卡片轻微上浮
+   说明：卡片 hover 自身会上浮 -6px（第 10 节），角标作为卡片的
+   伪元素已经跟着一起移动；这里再叠加 -3px 的独立位移，
+   做出「角标轻轻飘起来」的细节。只做位移，不加旋转等其它动画。
+   只在支持悬停的精确指针设备（鼠标 / 触控板）上生效，
+   触屏设备不会留下粘滞的浮动状态。
+   ============================================================= */
+@media (hover: hover) and (pointer: fine) {
+  .project-card:hover::after {
+    transform: translateY(-3px);
+  }
+}
+
+/* =============================================================
+   15.3 小八装饰 · 移动端（< 768px）统一缩放到 60%
+   -------------------------------------------------------------
+   尺寸严格 = 桌面值 × --hachi-mobile-scale(0.6)，用 calc 表达：
+     120 → 72px、40 → 24px、60 → 36px
+   想整体调整手机端比例，只改 :root 里的 --hachi-mobile-scale 即可。
+   三处装饰依然只做纵向偏移、水平方向不超出容器，
+   因此既不遮挡文字 / 按钮 / 网易云 iframe，也不会产生横向滚动条。
+   ============================================================= */
+@media (max-width: 767.98px) {
+  .hero-inner::after {
+    width: calc(var(--hachi-hero) * var(--hachi-mobile-scale));      /* 72px */
+    height: calc(var(--hachi-hero) * var(--hachi-mobile-scale));
+    right: 0;
+    bottom: -16px;               /* 继续下移到首屏留白区，绝不压住按钮 */
+  }
+  .project-card::after {
+    width: calc(var(--hachi-badge) * var(--hachi-mobile-scale));     /* 24px */
+    height: calc(var(--hachi-badge) * var(--hachi-mobile-scale));
+    top: 10px;
+    right: 10px;
+    opacity: 0.88;
+  }
+  .project-card .project-title {
+    padding-right: 34px;         /* 避让空间同步收窄，仍大于角标宽度 */
+  }
+  #contact .card::after {
+    width: calc(var(--hachi-contact) * var(--hachi-mobile-scale));   /* 36px */
+    height: calc(var(--hachi-contact) * var(--hachi-mobile-scale));
+    right: 14px;
+  }
+}
+
+/* =============================================================
+   16.0 小屏导航：汉堡菜单（< 768px）
+   -------------------------------------------------------------
+   · ≥768px：导航保持完整展示，汉堡按钮不显示（桌面端无任何变化）。
+   · <768px：导航收起为右侧汉堡按钮，点击展开为顶栏下方的下拉面板。
+   · 展开状态由 JS 在 <nav id="site-nav"> 上添加 .is-open 控制、
+     按钮 aria-expanded 同步，属纯展示层逻辑，不影响其他模块。
+   ============================================================= */
+@media (max-width: 767.98px) {
+  /* 显示汉堡按钮（位于语言切换之后、最右侧） */
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  /* 导航变下拉面板：默认收起，展开时贴在顶栏下方通栏显示 */
+  .site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border-top: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+    box-shadow: 0 12px 24px rgba(91, 140, 214, 0.12);
+    padding: 8px 0;
+    max-height: calc(100vh - 68px);
+    overflow-y: auto;            /* 矮视口（如横屏）下菜单自身可滚动 */
+  }
+  .site-nav.is-open {
+    display: block;
+  }
+
+  /* 菜单项改为纵向排列，扩大点击区域，方便手指点按 */
+  .nav-list {
+    flex-direction: column;
+    gap: 0;
+    padding: 0 14px;
+  }
+  .nav-list li + li {
+    border-top: 1px solid #f0f5fc; /* 浅蓝分隔线，保持蓝白基调 */
+  }
+  .nav-list a {
+    display: block;
+    padding: 14px 10px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+  .nav-list a:active {
+    background: var(--primary-soft);
+  }
+}
+
+/* =============================================================
+   16. 移动端 / 响应式适配
+   说明：减小断点下的字号、间距，并让多列布局变为单列。
+   本条位于装饰规则之后，因此可以正确覆盖桌面端的装饰尺寸。
+   ============================================================= */
+@media (max-width: 720px) {
+  /* 导航的显隐已交由上方 16.0 断点（< 768px）的汉堡菜单统一接管，
+     这里不再重复隐藏 .site-nav，避免展开的菜单被覆盖掉 */
+
+  /* 小屏幕上隐藏顶部主按钮，优先保证品牌、语言切换与汉堡按钮的空间
+     （首屏区域仍有「联系我」按钮，不影响功能） */
+  .header-cta {
+    display: none;
+  }
+
+  /* 留白优化：小屏减少左右内边距，避免内容被挤窄 */
+  .container {
+    padding: 0 18px;
+  }
+
+  /* 语言按钮在手机上更紧凑 */
+  .lang-btn {
+    padding: 6px 8px;
+    font-size: 0.78rem;
+  }
+
+  .hero {
+    padding: 64px 0;             /* 留白优化：移动端首屏上下留白 48px → 64px */
+  }
+  /* 视觉深化：移动端一级标题同步缩小，保持层级比例 */
+  .hero-name {
+    font-size: 1.6rem;
+  }
+  .hero-tagline {
+    font-size: 0.95rem;
+  }
+  .hero-tags {
+    gap: 10px;
+    margin-bottom: 26px;         /* 留白优化：移动端标签组下间距略放宽 */
+  }
+  .hero-actions {
+    gap: 12px;
+  }
+
+  .project-grid {
+    grid-template-columns: 1fr; /* 项目卡片在手机上变为单列 */
+  }
+
+  .section {
+    padding: 48px 0;             /* 留白优化：移动端区块留白 40px → 48px */
+  }
+  /* 视觉深化：移动端标题层级同步缩小 */
+  .section-title {
+    font-size: 1.35rem;
+    margin-bottom: 20px;         /* 留白优化：移动端标题下间距 */
+  }
+  .section-desc {
+    margin-bottom: 22px;         /* 留白优化：移动端说明下间距 */
+  }
+
+  /* 留白优化：移动端卡片内边距在保持透气的同时避免过窄 */
+  .card {
+    padding: 22px;
+  }
+  /* 视觉深化：触屏设备不做位移反馈，避免 hover 状态粘滞
+     （项目卡片的 -6px 上浮同样在这里被关掉） */
+  .card:hover,
+  .project-card:hover,
+  .tag:hover,
+  .btn:hover {
+    transform: none;
+  }
+
+  .sub-title {
+    margin: 18px 0 12px;
+    font-size: 1.05rem;
+  }
+  .project-title {
+    font-size: 1.05rem;
+  }
+
+  /* 留白优化：移动端标签与歌单块留白同步收紧 */
+  .tag {
+    padding: 8px 14px;
+  }
+  .tag-list {
+    gap: 12px;
+  }
+
+  .site-footer {
+    padding: 32px 0;
+  }
+
+  /* 联系信息在手机上改为纵向排列 */
+  .contact-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .contact-label {
+    min-width: 0;
+  }
+
+  /* 视觉深化：小八装饰在移动端的尺寸已统一由上方 15.3 断点
+     （< 768px，桌面尺寸 × 0.6）接管，这里不再重复声明尺寸，
+     避免两处数值互相覆盖、日后难以维护。 */
+}
+
+/* =============================================================
+   16.1 超小屏（≤ 430px）
+   说明：上一版在这里把小八装饰「再降一档」，V1.7 起删除了这些尺寸
+   —— 装饰现在统一由 15.3（< 768px，桌面尺寸 × 0.6）接管：
+     120 → 72px、40 → 24px、60 → 36px
+   60% 的尺寸在最窄手机竖屏上依然落在留白区、不遮挡任何内容，
+   所以不再单独降档，规则更集中、更好维护。
+   若某天想在超小屏再缩一档，在这里补回一条 .hero-inner::after 即可。
+   ============================================================= */
+
+/* 视觉深化 / 体验优化：对「减少动态效果」的系统偏好给出无动画降级（纯样式） */
+@media (prefers-reduced-motion: reduce) {
+  /* 体验优化：关闭锚点平滑滚动，改为立即跳转（尊重系统偏好） */
+  html {
+    scroll-behavior: auto;
+  }
+  .card,
+  .btn,
+  .tag,
+  .nav-toggle,
+  .nav-toggle-bar,
+  /* V1.7：小八装饰容器（三处，含卡片角标与联系区侧边）统一关闭过渡 */
+  .hero-inner::after,
+  .project-card::after,
+  #contact .card::after {
+    transition: none;
+  }
+  .card:hover,
+  .btn:hover,
+  .btn:active,
+  .tag:hover,
+  .project-card:hover::after {
+    transform: none;
+  }
+  /* V2：尊重系统「减少动态效果」—— 首屏小八取消淡入，
+     直接以静态 opacity 0.96 显示（不会停在透明的第一帧） */
+  .hero-inner::after {
+    animation: none;
+  }
+}
+
+/* =============================================================
+   17. 自定义光标（乌波主题）
+   -------------------------------------------------------------
+   · 本节是「静态回退」：CSS 的 cursor 属性不支持动图 ——
+     这两张 APNG（各 79 帧、无限循环）用作 cursor 时只会显示第一帧，
+     真正的动画由 17.1 的跟随图层播放（逻辑见 js/main.js 功能 5）；
+   · 默认悬浮光标：普通（蓝）乌波，图片 59×47，热点 12,12（沿用给定值）；
+   · 鼠标按下时：切换为异色（粉）乌波 —— 两张图形态差异明显；
+   · 末尾的 auto 是回退值：图片加载失败时自动退回系统光标，
+     所以即使图片临时取不到，页面也不会“没有光标”；
+   · 说明：本节之前的 .btn / .lang-btn / a 等已声明 cursor: pointer，
+     类选择器优先级高于通配符 *，所以这里用 !important 统一覆盖，
+     保证整站（含按钮、链接、菜单）光标风格一致。
+     若希望按钮 / 链接保留系统手型提示，删掉两条规则里的
+     !important 即可（保留 !important 则是全站统一乌波光标）。
+   -------------------------------------------------------------
+   【图片文件与来源】
+   两条规则都是「本地 → 外链 → 系统光标」三段回退，顺序如下：
+     1) ../assets/wooper-default.png（悬浮）与 ../assets/wooper-active.png（按下）；
+     2) 本地图片不存在时，再尝试 52poke 百科的宝可梦精灵图外链；
+     3) 两处都取不到，退回系统默认箭头，不会出现“没有光标”。
+   · 本地图片已就位：personal-homepage/assets/ 与 outputs/assets/ 各一份，
+     均为 59×47 的 APNG 动图（原始文件，保留全部 79 帧动画）；
+     图片使用色键透明（tRNS）+ 帧混合，浏览器可正常透明显示。
+   · 预览副本需要单独一份的原因：预览页是 outputs/index.html，
+     样式表在 outputs/css/ 下，../assets/ 会指向 outputs/assets/。
+   · 热点提示：坐标为 12,12，落在图片左上区域；本图内容中心约 26,23，
+     若希望“指哪打哪”更精确，把两组 12 12 改成 26 23 即可。
+   · 素材来源：52poke 百科宝可梦精灵图，版权归原权利人，仅作个人主页装饰。
+   ============================================================= */
+
+/* 默认悬浮光标：普通（蓝）乌波，图片 59×47，热点 12,12
+   「本地优先 → 外链回退 → 系统光标兜底」三段回退：
+   assets/ 下放好图片即自动生效；未放图时先试 52poke 外链；都不可用则退回系统箭头 */
+*,
+*::before,
+*::after {
+  cursor: url("../assets/wooper-default.png") 12 12,
+          url("https://media.52poke.com/wiki/b/b0/Spr_6x_194_m.png") 12 12,
+          auto !important;
+}
+
+/* 鼠标按下时切换为异色（粉）乌波，按下反馈更明显
+   （同样为本地优先 + 外链回退；热点同样沿用 12,12） */
+*:active,
+*:active::before,
+*:active::after {
+  cursor: url("../assets/wooper-active.png") 12 12,
+          url("https://media.52poke.com/wiki/f/fe/Spr_6x_194_m_s.png") 12 12,
+          auto !important;
+}
+
+/* 例外：禁用状态的按钮保留「不可用」光标提示，避免丢失可用性信息
+   （优先级高于上面的通配符规则；如不需要可整条删除） */
+.btn:disabled {
+  cursor: not-allowed !important;
+}
+
+/* =============================================================
+   17.1 动画光标图层（跟随鼠标播放 APNG 动图）
+   -------------------------------------------------------------
+   为什么需要这一层：CSS 的 cursor 属性不支持动图 —— APNG / GIF
+   用作 cursor 时浏览器只会画第一帧，所以第 17 节是「静态回退」，
+   真正的动画由本节的图层播放：元素见 index.html 的 .cursor-follow，
+   跟随与切换逻辑见 js/main.js 功能 5。
+   · 图层尺寸 59×47，与图片一致；热点 12,12 位于图片左上，
+     因此定位时整体偏移 (-12px, -12px)，手感与静态光标一致；
+   · pointer-events: none —— 不拦截任何点击 / 悬停 / 文本选择；
+   · 只在 JS 成功启用后（body 加上 .has-animated-cursor）才隐藏系统
+     光标；脚本未执行或执行失败时，页面仍用第 17 节的静态乌波光标；
+   · 触屏设备不启用（没有鼠标指针）；系统开启「减少动态效果」时整段
+     规则不生效，也会自动退回静态光标；
+   · 例外：.btn:disabled 的 not-allowed 提示优先级更高（类 + 伪类），
+     所以禁用按钮上依然能看到「不可用」提示，不会丢失可用性信息。
+   ============================================================= */
+.cursor-follow {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body.has-animated-cursor .cursor-follow {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 59px;
+    height: 47px;
+    /* APNG 动图，作为背景图同样会循环播放（各 79 帧） */
+    background-image: url("../assets/wooper-default.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    pointer-events: none;              /* 关键：不挡点击与 hover */
+    z-index: 9999;                     /* 始终在最上层 */
+    transform: translate3d(-100px, -100px, 0); /* 未进入页面前移出视口 */
+    will-change: transform;            /* 提示浏览器，减少跟随延迟 */
+    opacity: 0;                        /* 鼠标进入页面后再淡入 */
+  }
+
+  body.has-animated-cursor .cursor-follow.is-visible {
+    opacity: 1;
+  }
+
+  /* 按下时换成异色（粉）乌波动图，行为与静态版本一致 */
+  body.has-animated-cursor .cursor-follow.is-pressed {
+    background-image: url("../assets/wooper-active.png");
+  }
+
+  /* 启用动画光标后隐藏系统光标（含 .btn / a 等原有的 pointer 手型） */
+  body.has-animated-cursor,
+  body.has-animated-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* =============================================================
+   18. 字号 / 字重层级总表（V1.7 · 本节只有文档，不产生任何样式）
+   -------------------------------------------------------------
+   全站字号与字重只从 :root 的 --fs-* / --fw-* 变量取值，
+   改一处即可全站同步。层级从大到小如下：
+
+   ┌ 层级 ────────────── 字号变量 ───── 字重变量 ────── 主要使用位置
+   │ 一级标题（首屏姓名）  --fs-h1   2.1rem   --fw-bold     700   .hero-name
+   │ 二级标题（区块标题）  --fs-h2   1.6rem   --fw-bold     700   .section-title
+   │ 三级标题（卡片/小标题）--fs-h3  1.12rem  --fw-semibold 600   .sub-title / .project-title
+   │ 正文                 --fs-body 1rem     --fw-regular  400   body / .hero-tagline /
+   │                                                             .about-intro / .about-info /
+   │                                                             .contact-list
+   │ 次要正文             --fs-sm   0.95rem  --fw-regular  400   .section-desc / .project-desc /
+   │                                                             .twin-desc / .contact-desc
+   │ 交互文字（按钮/导航）  --fs-sm   0.95rem  --fw-medium   500   .btn / .nav-list a
+   │ 标签                 --fs-tag  0.85rem  --fw-medium   500   .tag
+   │ 注脚                 --fs-note 0.9rem   --fw-regular  400   .music-fallback / .site-footer
+   │ 最小注脚             --fs-xs   0.82rem  --fw-medium   500   .lang-btn / .footer-note
+   └
+
+   说明
+   · 字重只有四档：700 标题 / 600 卡片标题与信息标签 / 500 按钮、导航、
+     标签 / 400 正文，正文与次要正文不再出现「中间字重」，层级更干净；
+   · 例外（单处使用，不并入层级表）：
+       .hero-avatar 的 2.2rem —— 头像内的展示级字号，全站只此一处；
+   · 媒体查询（≤ 900px / ≤ 767.98px / ≤ 720px）里的字号是「同一层级的
+     响应式缩放值」，写成固定数值是为了让每个断点的视觉效果一目了然，
+     它们不参与上面的层级表。
+   ============================================================= */
+
+/* =============================================================
+   19. 网易云歌单 · 弹幕滚动展示层（V3 · 与 js/main.js 功能 6 配套）
+   -------------------------------------------------------------
+   这是什么：歌单模块里、网易云 iframe「正上方」的一条展示带
+   （高度由 JS 按轨道数自适应，见下面「行距与轨道」一段）。
+   容器与每一条弹幕都由 JS 动态生成（见 js/main.js 功能 6），
+   内容为「专辑封面小图 + 歌名」，从屏幕右侧向左侧匀速飘过、循环播放。
+
+   为什么放在 iframe 上方、而不是盖在它上面：
+   · 需求要求「不遮挡 iframe 主要播放按钮」，所以它占据自己的布局空间，
+     与播放器上下排列，几何上完全不重叠（不是靠 z-index 压住）；
+   · 网易云 iframe 与它的外层 .music-embed（圆角 / 阴影 / overflow）没有
+     任何改动，播放器样式与功能保持原样。
+
+   动画原理（为什么不用 JS 逐帧驱动）：
+   · 位移交给 @keyframes 处理：translate3d 走合成层、只动 transform，
+     不触发重排重绘，所以匀速、不卡顿、不闪烁，CPU 占用也低；
+   · 所有弹幕共用同一段行程（100vw → --danmaku-exit）和同一个周期
+     --danmaku-duration =（视口宽 + 最宽的一条弹幕）÷ 速度：每条速度完全一致
+     （真・匀速，不是靠 easing 假装的），循环衔接处也不会追尾或忽快忽慢；
+   · 错峰用负数 animation-delay（JS 写入 --danmaku-delay）实现，位置按每条
+     弹幕的实测宽度累计 —— 一进页面就已经均匀分布在各条轨道上，
+     不会先空场几秒才飘出第一条，同轨相邻两条也不会挤在一起。
+
+   行距与轨道（V3.1 起全部自适应，不需要手改数字）：
+   · 单条弹幕高 48px（封面 48×48），轨道间距 = 48 + 8 = 56px，
+     也就是上下两条之间留 8px 空隙 —— 纵向完全不重叠，不再有 16px 交叠；
+   · 轨道数量由 JS 按容量自动决定：拿「视口宽 + 最宽的一条弹幕」当一圈的
+     可用长度，从 2 条轨道起算，直到每条轨道都放得下为止（最多 4 条），
+     所以窄屏 / 长歌名会自动多分一条轨道，宽屏则只用 2 条；
+   · 展示带高度跟着自动变：上下留白 + 轨道数 × 48 + (轨道数 − 1) × 8
+     （2 轨 ≈ 116px，3 轨 ≈ 172px，4 轨 ≈ 228px），由 JS 写进 style.height，
+     下面 .danmaku 里的 80px 只是 JS 未运行时的兜底高度；
+   · 同一条轨道上相邻两条之间至少留 72px 空隙（DANMAKU_MIN_GAP），
+     错峰位置按每条弹幕的实测宽度算出来，所以长歌名也不会撞在一起。
+
+   红线检查：
+   · .danmaku 与 .danmaku-viewport 都是 pointer-events: none，
+     绝不拦截点击 / 悬停 —— iframe 播放按钮、页面按钮、文字、小八装饰
+     全部照常可用；
+   · overflow: hidden 把飘出画面的弹幕裁掉，不会产生横向滚动条；
+   · 移动端（< 768px）与系统「减少动态效果」下关闭动画，只静态显示歌单标题。
+   ============================================================= */
+.danmaku {
+  position: relative;
+  /* 兜底高度：真实高度由 JS 按轨道数写入 style.height（2–4 轨 ≈ 116–228px）；
+     移动端 /「减少动态效果」下 JS 会把内联高度清空，交回 19.1 的 height: auto */
+  height: 80px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);   /* 与卡片 / 播放器同一套圆角 */
+  /* 极淡蓝色半透明底：与页面蓝白风格统一，不抢下方播放器 */
+  background: rgba(91, 140, 214, 0.06);
+  overflow: hidden;                    /* 裁掉飘出画面的弹幕，避免横向滚动条 */
+  pointer-events: none;                /* 关键：整层不参与任何交互 */
+}
+
+/* 裁切层：弹幕在这里面飘，超出部分被裁掉 */
+.danmaku-viewport {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+/* 单条弹幕：专辑封面 + 歌名，横向排布；
+   纵向位置由 JS 写入 --danmaku-top 做上下错开，不堆在同一水平线 */
+.danmaku-item {
+  position: absolute;
+  top: var(--danmaku-top, 0px);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;                           /* 封面与歌名之间的间距 */
+  height: 48px;                        /* 与 js/main.js 的 DANMAKU_ITEM_HEIGHT 保持一致 */
+  white-space: nowrap;                 /* 歌名不换行，整条一起飘 */
+  will-change: transform;              /* 提到合成层，滚动更顺滑 */
+  animation-name: danmaku-flow;
+  animation-duration: var(--danmaku-duration, 20s);   /* 由 JS 按宽度算好写入 */
+  animation-delay: var(--danmaku-delay, 0s);          /* 负数 = 错峰 */
+  animation-timing-function: linear;   /* 需求：匀速，不加缓动 */
+  animation-iteration-count: infinite; /* 需求：循环播放 */
+  animation-fill-mode: both;
+}
+
+/* 从屏幕右侧（100vw）飘到完全离开左侧
+   —— 终点由 JS 按「最宽的一条弹幕」写进 --danmaku-exit：所有弹幕共享同一段
+   行程，速度一致、周期一致，循环无缝；兜底的 -160px 只用于 JS 还没算出宽度的瞬间 */
+@keyframes danmaku-flow {
+  from {
+    transform: translate3d(100vw, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--danmaku-exit, -160px), 0, 0);
+  }
+}
+
+/* 专辑封面小图：48×48 圆角正方形 */
+.danmaku-cover {
+  display: block;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;                  /* 封面圆角（与按钮同一档，更整体） */
+  object-fit: cover;                   /* 非正方形封面等比裁切，不拉伸变形 */
+  background: var(--primary-soft);     /* 图片未加载时先显示淡蓝底，不出现裂图感 */
+  box-shadow: 0 2px 8px rgba(91, 140, 214, 0.18);  /* 与全站一致的轻投影 */
+}
+
+/* 歌名文字：深灰，保证在淡蓝底上的可读性 */
+.danmaku-title {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text);                  /* 深灰（#3a4454），对比度充足 */
+  letter-spacing: 0.008em;             /* 与 V2 标题字距同一档，观感统一 */
+}
+
+/* 移动端静态标题：桌面端隐藏，由下面 19.1 的媒体查询打开显示 */
+.danmaku-static {
+  display: none;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+
+/* -------------------------------------------------------------
+   19.1 移动端（< 768px）与「减少动态效果」：关闭弹幕动画
+   需求：手机端不做滚动动画（省性能、避免布局错乱），
+        在展示栏内静态列出歌曲。
+   说明：
+   · 这里用 display: none 把弹幕层整体隐藏 —— 元素不参与布局也不绘制，
+     动画自然不执行，等于「零开销」，比用 animation: none 更彻底；
+   · 展示带高度改为自适应，静态标题按内容撑开，不动页面其它布局。
+   ------------------------------------------------------------- */
+@media (max-width: 767.98px), (prefers-reduced-motion: reduce) {
+  .danmaku {
+    display: flex;
+    align-items: center;
+    height: auto;                      /* 静止状态不需要 JS 算出的高度（JS 也会清掉内联高度） */
+    min-height: 48px;
+    padding: 12px 16px;
+  }
+  .danmaku-viewport {
+    display: none;                     /* 整层隐藏：滚动动画随之关闭 */
+  }
+  .danmaku-item {
+    display: none;                     /* 双保险：弹幕条目本身也隐藏 */
+  }
+  .danmaku-static {
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+    padding-inline-start: 1.25rem;
+  }
+}
+
+/* =============================================================
+   20. V4 · 吉伊卡哇（Chiikawa）全站主题化
+   -------------------------------------------------------------
+   【这一节是什么】
+   V4 的全部改动都集中在这里：配色、圆角、角色贴图、微动态、
+   响应式与降级。第 1–19 节保持原样，所以想退回 V3.1 的冷调蓝白，
+   整段删掉本节即可，不会牵连 V1–V3 的任何一行。
+
+   【为什么用「后置覆盖」而不是直接改上面的规则】
+   · 第 1–19 节记录了 V1–V3 的完整演进过程，就地改动会让历史失真；
+   · 本节选择器与上文同优先级、位置更靠后，因此天然生效，
+     又能在这一处看全「V4 到底改了什么」。
+
+   【素材】
+   10 张吉伊卡哇动图（GIF、真透明背景，取自公开素材站爱给网的
+   吉伊卡哇贴图）：吉伊 / 小八 / 乌萨奇 / 栗子馒头四只角色。
+     sticker-hero-duo.gif   Hero 首屏右下角（吉伊 + 小八 并排）
+     sticker-card-badge.gif 项目卡片右上角标（吉伊）
+     sticker-about.gif      关于我卡片右下角（吉伊扭头）
+     sticker-skills.gif     技能卡片右下角（乌萨奇）
+     sticker-music.gif      音乐区块右上（吉伊发呆）
+     sticker-twin.gif       数字分身卡片右侧（乌萨奇抬头）
+     sticker-contact.gif    联系我侧边（栗子馒头）
+     sticker-footer.gif     页脚右侧（小八）
+     sticker-brand.gif      品牌名右侧（吉伊 + 小八 小图）
+     sticker-title-icon.gif 二级标题右侧小图标（吉伊线稿）
+   处理方式：原始 GIF → 降采样到「展示尺寸的 2 倍」+ 调色板量化，
+   每张都用逐像素 alpha 统计校验过透明通道未被破坏，合计约 495KB。
+
+   【红线复核】
+   · 只由 CSS 伪元素承载：未新增 HTML 标签、未改 index.html；
+   · 全部 pointer-events: none，不拦截点击 / 悬停 / 文本选择；
+   · 落点都在正文留白区，不遮挡文字 / 按钮 / 网易云 iframe；
+   · 不产生横向滚动条；移动端与「减少动态效果」均有降级。
+   ============================================================= */
+
+/* ---------- 20.1 主题变量覆盖（奶油粉 + 天蓝） ---------- */
+/* 说明：与第 1 节同为 :root，位置更靠后 → 覆盖生效。
+   改主题只需要动这一块，第 1–19 节所有走变量的规则都会跟着变。 */
+:root {
+  /* 背景：暖奶油 → 淡粉 → 天蓝（自上而下的「甜」一档层次） */
+  --bg: #fffdfb;
+  --bg-cream: #fff7f2;
+  --bg-soft: #f2f8ff;
+
+  /* 主色：天蓝（小八色）—— 仍是低饱和，只是比 V3 暖一点 */
+  --primary: #5f93d8;
+  --primary-dark: #4d80c4;
+  --primary-soft: #eaf3fd;
+  --primary-border: #d3e5f8;
+
+  /* V4 新增：粉色系（吉伊的腮红 / 奶油粉），用于装饰与点缀 */
+  --accent: #f3a0bc;
+  --accent-dark: #e07f9f;
+  --accent-soft: #fdeef3;
+  --accent-soft-strong: #fbe3ec;
+  --accent-border: #f8d3e2;
+  --accent-text: #a8466a;        /* 粉字专用：白底 5.6:1、粉底 5.1:1，达 AA */
+
+  /* 文字：由冷灰蓝转暖灰；对比度均高于 V3（白底实测值） */
+  --text: #443c42;               /* 10.6:1 */
+  --text-muted: #71676e;         /* 5.4:1 */
+
+  /* 卡片：暖白底 + 粉调细边框（不再是冷蓝边框） */
+  --card-bg: #ffffff;
+  --card-border: #f0dde7;
+  --card-border-hover: #e3bfd2;
+
+  /* 软萌圆角：沿用 V2 的三级体系，只把数值放大一档 */
+  --card-radius: 16px;
+  --btn-radius: 12px;
+  --section-radius: 20px;
+
+  /* 阴影：由蓝调转暖调（仍是低透明度叠加，靠层次而不是加深出体积） */
+  --card-shadow: 0 1px 2px rgba(190, 150, 170, 0.06),
+                 0 5px 12px rgba(160, 140, 190, 0.06),
+                 0 14px 30px rgba(120, 150, 200, 0.07);
+  --card-shadow-hover: 0 2px 6px rgba(190, 150, 170, 0.09),
+                       0 10px 22px rgba(160, 140, 190, 0.11),
+                       0 22px 44px rgba(120, 150, 200, 0.13);
+
+  /* V4 贴图尺寸（一处改、全站生效；移动端另有 900px 缩小一档） */
+  --sticker-brand: 26px;         /* 品牌名右侧小图 */
+  --sticker-icon: 26px;          /* 二级标题右侧小图标 */
+  --sticker-about: 56px;         /* 关于我卡片右下角 */
+  --sticker-skills: 52px;        /* 技能卡片右下角 */
+  --sticker-music: 48px;         /* 音乐区块右上留白 */
+  --sticker-twin: 52px;          /* 数字分身卡片右侧 */
+  --sticker-footer: 48px;        /* 页脚右侧 */
+}
+
+/* ---------- 20.2 页面底色与区块白面 ---------- */
+/* 背景由「纯白 → 极浅蓝」改为「暖奶油 → 淡粉 → 天蓝」：
+   首屏偏暖、页脚偏蓝，贴图角色的配色与底色是同一条色带上的。 */
+body {
+  background: linear-gradient(
+    180deg,
+    var(--bg) 0%,
+    var(--bg-cream) 34%,
+    var(--bg-soft) 100%
+  );
+}
+/* 区块内层白面：由冷白转暖白；同时补 position: relative，
+   作为「区块级贴图」（音乐区右上角那张）的定位参照。 */
+.section > .container {
+  background: rgba(255, 252, 250, 0.55);
+  position: relative;
+}
+/* 页脚不是 .section（它是 <footer>），上面那条选择器到不了它的容器，
+   这里单独补上定位参照 —— 页脚右侧那张贴图依赖它做垂直居中。 */
+.site-footer .container {
+  position: relative;
+}
+
+/* ---------- 20.3 卡片 / 按钮：软萌化补充 ---------- */
+/* .card 补一句 position: relative —— 贴图是它的伪元素。
+   注意：.card:hover 带 transform，而 transform 会临时改变「包含块」；
+   若不给 .card 显式定位，贴图会在 hover 的瞬间跳位。 */
+.card {
+  position: relative;
+}
+/* 按钮投影由蓝调转暖，与新的卡片 / 装饰阴影同一色系 */
+.btn-primary {
+  box-shadow: 0 2px 6px rgba(190, 150, 170, 0.20);
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 18px rgba(190, 150, 170, 0.32);
+}
+.btn-primary:active {
+  box-shadow: 0 2px 8px rgba(190, 150, 170, 0.28);
+}
+.btn-outline {
+  box-shadow: 0 2px 6px rgba(190, 150, 170, 0.12);
+}
+.btn-outline:hover {
+  box-shadow: 0 8px 18px rgba(190, 150, 170, 0.20);
+}
+.btn-outline:active {
+  box-shadow: 0 2px 6px rgba(190, 150, 170, 0.16);
+}
+
+/* ---------- 20.4 标题装饰：粉蓝渐变 + 角色小图标 ---------- */
+/* 二级标题左侧装饰条：由纯蓝改为「上粉下蓝」渐变 */
+.section-title::before {
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary) 100%);
+  opacity: 0.85;
+}
+/* 二级标题右侧角色小图标（吉伊线稿动图）：
+   用 inline-block 伪元素跟在标题文字之后，
+   不占额外结构、不改变标题的行盒高度，也不会引起换行错位。 */
+.section-title::after {
+  content: "";
+  display: inline-block;
+  width: var(--sticker-icon);
+  height: var(--sticker-icon);
+  margin-left: 10px;
+  vertical-align: -5px;
+  background-image: url("../assets/sticker-title-icon.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+/* ---------- 20.5 Hero 姓名：纯色兜底 + 渐变字（渐进增强） ---------- */
+.hero-name .highlight {
+  color: var(--accent-text);     /* 兜底：不支持 text 裁剪时用纯粉 */
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .hero-name .highlight {
+    background-image: linear-gradient(
+      92deg,
+      var(--accent-dark) 0%,
+      var(--primary) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+/* ---------- 20.6 头像 / 品牌：粉蓝渐变 + 品牌贴图 ---------- */
+.brand-avatar,
+.hero-avatar {
+  background: linear-gradient(180deg, #fff8f4 0%, #eaf3fd 100%);
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+}
+/* 品牌名右侧的「吉伊 + 小八」小图（.brand 本身是 flex 行，
+   ::after 自然成为第三个条目，间距沿用原有的 gap: 10px） */
+.brand::after {
+  content: "";
+  width: var(--sticker-brand);
+  height: var(--sticker-brand);
+  flex-shrink: 0;
+  background-image: url("../assets/sticker-brand.gif");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+}
+
+/* ---------- 20.7 角色贴图 · 浮动动画 ---------- */
+/* 用独立的 translate 属性做上下浮动：
+   translate 与 transform 是两个互不覆盖的属性，所以本动画不会破坏
+   「联系我侧边用 transform 做垂直居中」与「Hero 用 transform 做淡入」
+   这两处既有写法（这也是这里不用 translateY 的原因）。
+   浏览器不支持 translate 属性时只是不浮动，贴图照常显示。 */
+@keyframes sticker-bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+/* 五处新增贴图的公共显示规则（各自的位置与素材见 20.8） */
+#about .card::after,
+#skills .card::after,
+#twin .card::after,
+#music .container::after,
+.site-footer .container::after {
+  content: "";
+  position: absolute;
+  display: block;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  /* 沿角色轮廓投影（不用 box-shadow，避免出现暴露容器边界的方框影子） */
+  filter: drop-shadow(0 4px 10px rgba(150, 120, 150, 0.18));
+  opacity: 0.94;
+  pointer-events: none;          /* 关键：装饰不参与任何交互 */
+  animation: sticker-bob 3.8s ease-in-out infinite;
+}
+
+/* ---------- 20.8 各处贴图的位置与素材 ---------- */
+/* 关于我：卡片右下角（介绍文字与三条信息都靠左，右下是留白） */
+#about .card::after {
+  width: var(--sticker-about);
+  height: var(--sticker-about);
+  right: 20px;
+  bottom: 20px;
+  background-image: url("../assets/sticker-about.gif");
+  animation-delay: 0.2s;
+}
+/* 技能与兴趣：卡片右下角（最后一排「兴趣」标签很短，右下不压内容） */
+#skills .card::after {
+  width: var(--sticker-skills);
+  height: var(--sticker-skills);
+  right: 20px;
+  bottom: 18px;
+  background-image: url("../assets/sticker-skills.gif");
+  animation-delay: 0.9s;
+}
+/* 音乐歌单：区块右上留白（标题与说明都靠左，说明最大宽 640px） */
+#music .container::after {
+  width: var(--sticker-music);
+  height: var(--sticker-music);
+  right: 4px;
+  top: 46px;
+  background-image: url("../assets/sticker-music.gif");
+  animation-delay: 1.6s;
+}
+/* 数字分身：卡片右侧垂直居中（卡片内容居中，左右两侧都是留白） */
+#twin .card::after {
+  width: var(--sticker-twin);
+  height: var(--sticker-twin);
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-image: url("../assets/sticker-twin.gif");
+  animation-delay: 0.5s;
+}
+/* 页脚：右侧垂直居中（页脚是居中排版，两侧留白） */
+.site-footer .container::after {
+  width: var(--sticker-footer);
+  height: var(--sticker-footer);
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-image: url("../assets/sticker-footer.gif");
+  animation-delay: 1.2s;
+}
+
+/* ---------- 20.9 第 15 节 A / B / C 三处：换成会动的新素材 ---------- */
+/* A. Hero 首屏右下角：吉伊 + 小八 并排（素材 150px，展示 120px）
+   淡入沿用 hachi-hero-in，再叠一层错峰浮动；
+   两者一个动 transform、一个动 translate，互不覆盖。 */
+.hero-inner::after {
+  background-image: url("../assets/sticker-hero-duo.gif");
+  animation: hachi-hero-in 0.9s ease-out 0.2s both,
+             sticker-bob 4.2s ease-in-out 1.2s infinite;
+}
+/* B. 项目卡片右上角标：吉伊（40px）
+   原来是 PNG 的头部特写（background-size: 180% + 焦点偏移），
+   换成全身动图后取景必须改回 contain / center，否则会被放大裁切。 */
+.project-card::after {
+  background-image: url("../assets/sticker-card-badge.gif");
+  background-size: contain;
+  background-position: center;
+}
+/* C. 联系我侧边：栗子馒头（60px），保留原来的垂直居中 */
+#contact .card::after {
+  background-image: url("../assets/sticker-contact.gif");
+  animation: sticker-bob 4s ease-in-out 0.4s infinite;
+}
+
+/* ---------- 20.10 细节：把残留的冷蓝点缀改成粉蓝 ---------- */
+/* 页脚分割线：由「单色蓝渐变」改为「粉 → 蓝渐变」，
+   仍沿用第 14 节的 background-size / position（只换图片）。 */
+.site-footer {
+  background-image: linear-gradient(
+    90deg,
+    rgba(243, 160, 188, 0) 0%,
+    rgba(243, 160, 188, 0.42) 24%,
+    rgba(95, 147, 216, 0.34) 76%,
+    rgba(95, 147, 216, 0) 100%
+  );
+}
+/* 弹幕展示带：粉 → 蓝极淡渐变。
+   注意：只改底色；第 19 节的动画、轨道、裁切与 pointer-events 全部未动，
+   歌名仍是 --text 深灰，在极淡底色上的对比度不受影响。 */
+.danmaku {
+  background: linear-gradient(
+    90deg,
+    rgba(243, 160, 188, 0.10) 0%,
+    rgba(95, 147, 216, 0.07) 100%
+  );
+}
+/* 禁用态按钮：由冷灰蓝改暖灰粉（与整体色调统一） */
+.btn-primary:disabled {
+  background: #d9c4ce;
+}
+/* 标签：奇数位保持天蓝，偶数位改奶油粉
+   （粉字用 --accent-text，白底 5.6:1 / 粉底 5.1:1，达 AA） */
+.hero-tags .tag:nth-child(2n),
+.tag-list .tag:nth-child(2n) {
+  background: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+}
+.hero-tags .tag:nth-child(2n):hover,
+.tag-list .tag:nth-child(2n):hover {
+  background: var(--accent-soft-strong);
+  border-color: var(--accent);
+}
+
+/* ---------- 20.11 响应式：中等屏幕缩小 / 移动端隐藏 ---------- */
+@media (max-width: 900px) {
+  :root {
+    --sticker-about: 46px;
+    --sticker-skills: 42px;
+    --sticker-music: 40px;
+    --sticker-twin: 42px;
+    --sticker-footer: 36px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  /* 移动端隐藏 6 处小贴图：窄屏留白本来就少，
+     保留 Hero / 卡片角标 / 联系我 / 标题小图标四处即可，避免页面变花 */
+  .brand::after,
+  #about .card::after,
+  #skills .card::after,
+  #music .container::after,
+  #twin .card::after,
+  .site-footer .container::after {
+    display: none;
+  }
+  /* 标题小图标在手机上收小一档 */
+  :root {
+    --sticker-icon: 20px;
+  }
+  .section-title::after {
+    margin-left: 8px;
+    vertical-align: -4px;
+  }
+  /* 第 15 节 A 段的「移动端不增强动画」在 V4 里必须再声明一次：
+     20.9 给 .hero-inner::after 加了动画且位置更靠后，
+     不重复声明的话手机端会被重新打开动画（媒体查询不提升优先级）。 */
+  .hero-inner::after {
+    animation: none;
+  }
+  /* 联系我侧边的浮动同步关闭：移动端装饰保持静止 */
+  #contact .card::after {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 尊重系统「减少动态效果」：所有贴图停止浮动，仅静态显示
+     （注释见 20.11 的同类问题，这里同样必须重复声明） */
+  .hero-inner::after,
+  #about .card::after,
+  #skills .card::after,
+  #twin .card::after,
+  #music .container::after,
+  .site-footer .container::after,
+  #contact .card::after {
+    animation: none;
+  }
+  .brand::after,
+  .section-title::after {
+    translate: none;
+  }
+}
+
+/* =============================================================
+   20.12 V4 未改动清单（红线复核）
+   -------------------------------------------------------------
+   · index.html：结构、模块顺序、文字内容、data-i18n 全部未动；
+   · js/main.js：一行未改 —— 弹幕 / 乌波光标 / 汉堡菜单 / 歌单 /
+     语言切换全部保持 V3.1 的状态；
+   · 第 17 / 17.1 节乌波光标：未动；
+   · 第 16.0 节汉堡菜单：未动；
+   · 第 19 节弹幕：只覆盖了展示带底色，动画 / 轨道 / 裁切 /
+     pointer-events 全部未动；
+   · 网易云歌单 iframe 与外层 .music-embed（圆角 / 阴影 / 裁切）：未动；
+   · assets/ 原有三张小八 PNG 与备用 hachiware.png 全部保留，未删除；
+   · 全部贴图 pointer-events: none，交互完全不受影响。
+   ============================================================= */
+
+/* =============================================================
+   21. V5 · 访客反馈表单（新增模块，只增加样式，不覆盖任何既有规则）
+   -------------------------------------------------------------
+   【这一节是什么】
+   「联系我」下方新增的反馈表单模块的样式。
+   第 1–20 节一行未改：本节只定义全新的类名
+   （.feedback-form / .form-row / .form-label / .form-input /
+     .form-textarea / .form-counter / .form-actions / .form-status /
+     .form-hint / .btn.is-loading），
+   卡片、圆角、阴影、按钮一律直接复用现有类
+   （.card / .btn / .btn-primary / .btn-outline / .section / .container），
+   没有另起一套视觉。
+
+   【为什么不用新的配色】
+   表单的颜色全部取自现有的 CSS 变量（--primary / --card-border /
+   --btn-radius / --accent-text …），所以它跟着全站主题一起变：
+   V4 的奶油粉 + 天蓝主题下，表单自动是粉蓝调，这里不用改。
+
+   【移动端不溢出屏幕的三个关键点】
+   1) box-sizing: border-box —— padding 与 border 算在宽度内，不再撑宽；
+   2) width / max-width: 100% —— 任何父容器下都不会超出；
+   3) min-width: 0 —— flex 子项的默认最小宽度是 auto，
+      窄屏下会被内容（如长 placeholder）顶出去，必须显式归零。
+   另：输入框字号用 --fs-body（1rem = 16px），
+   小于 16px 时 iOS 会在聚焦时自动放大页面，这里正好卡在安全值上。
+
+   【无障碍 / 动效偏好】
+   状态提示用 role="status"（见 index.html），三种状态用颜色 + 文字双重区分，
+   不只靠颜色传达信息；系统「减少动态效果」下关闭过渡与转圈动画。
+   ============================================================= */
+
+/* ---------- 21.1 表单骨架 ---------- */
+/* 纵向排列，行与行之间统一留白；最大宽度与 .section-desc 一致（640px），
+   让标题、说明、表单左边界对齐成一条竖线 */
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 640px;
+}
+
+/* 一行 = 标签 + 控件（纵向） */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;                  /* 关键：见本节顶部「移动端不溢出」第 3 点 */
+}
+
+.form-label {
+  font-size: var(--fs-note);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+/* 「（必填）」/「（选填）」提示：比标签轻一档，不抢视觉 */
+.form-required,
+.form-optional {
+  font-weight: var(--fw-regular);
+}
+.form-required {
+  color: var(--accent-text);     /* 必填用主题的粉字色（白底 5.6:1，达 AA） */
+}
+.form-optional {
+  color: var(--text-muted);
+}
+
+/* ---------- 21.2 输入框 / 文本域 ---------- */
+/* 与卡片共用同一档圆角（--btn-radius）与描边（--card-border），
+   聚焦时给一圈淡蓝光圈，和全站焦点风格保持一致 */
+.form-input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;        /* 关键：见本节顶部「移动端不溢出」第 1 点 */
+  padding: 12px 14px;
+  font-family: inherit;          /* 关键：表单控件默认不继承字体，必须显式声明 */
+  font-size: var(--fs-body);     /* 1rem = 16px，避免 iOS 聚焦时自动放大页面 */
+  line-height: 1.7;              /* 与正文行高一致（V2 确认值） */
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--btn-radius);
+  transition: border-color 0.22s ease-out,
+              box-shadow 0.22s ease-out,
+              background-color 0.22s ease-out;
+  /* 抹平 iOS / 安卓的原生控件外观（圆角、内阴影等），保证各平台一致 */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.72;                 /* 占位文字比正文更浅，但仍可读 */
+}
+
+.form-input:hover {
+  border-color: var(--card-border-hover);
+}
+
+.form-input:focus {
+  outline: none;                 /* 用下面这圈光圈替代浏览器默认轮廓 */
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+/* 文本域：初始就够高（约 5 行），且只允许纵向拉伸 ——
+   横向拉伸会把卡片撑破，所以锁死 */
+.form-textarea {
+  min-height: 132px;
+  resize: vertical;
+}
+
+/* 字数统计：靠右的注脚级小字 */
+.form-counter {
+  margin: 0;
+  text-align: right;
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+/* ---------- 21.3 按钮行 ---------- */
+/* 桌面端横排；窄屏下由 21.6 改成整行按钮，便于点按 */
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---------- 21.4 提交中（loading） ---------- */
+/* 按钮进入 loading：禁用点击 + 显示转圈 + 文案切换由 JS 负责。
+   pointer-events: none 是双保险（disabled 本身已经不响应点击） */
+.btn.is-loading {
+  cursor: progress;
+  pointer-events: none;
+}
+
+/* loading 时保留主色（只轻微降透明度）：
+   不这样做的话，按钮会因为 :disabled 规则而「灰掉」，
+   在提交中反而看不清自己点的是哪个按钮 */
+.btn.btn-primary.is-loading {
+  background: var(--primary-dark);
+  opacity: 0.9;
+  box-shadow: 0 2px 8px rgba(190, 150, 170, 0.24);
+}
+
+/* 转圈：用 currentColor 画，主按钮（白字）与描边按钮（蓝字）都自适应 */
+.btn.is-loading::after {
+  content: "";
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  opacity: 0.85;
+  animation: btn-spin 0.7s linear infinite;
+}
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- 21.5 状态提示 ---------- */
+/* 校验失败 / 提交中 / 成功 / 失败共用这一个元素，
+   初始为空，没有提示时完全不占空间（:empty 不占位）。 */
+.form-status {
+  margin: 0;
+  font-size: var(--fs-note);
+  line-height: 1.6;
+}
+.form-status:empty {
+  display: none;
+}
+/* 成功 / 失败不只靠颜色区分：文案本身也写明了结果（见 js/main.js），
+   这两个颜色在白底上的对比度分别为 5.0:1 与 5.5:1，都达 WCAG AA */
+.form-status.is-success {
+  color: #2e7d5b;
+}
+.form-status.is-error {
+  color: #b83a5a;
+}
+.form-status.is-loading {
+  color: var(--text-muted);
+}
+
+/* 隐私说明：表单最下方的一行小字，注脚级 */
+.form-hint {
+  margin: 0;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ---------- 21.6 移动端适配（< 768px） ---------- */
+@media (max-width: 767.98px) {
+  .feedback-form {
+    gap: 16px;                   /* 小屏把行距收一点，减少滚动长度 */
+  }
+  /* 按钮竖排并占满整行：手指点按面积更大，也不会因为文案换行而忽宽忽窄 */
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .form-actions .btn {
+    width: 100%;
+  }
+  .form-textarea {
+    min-height: 120px;
+  }
+}
+
+/* ---------- 21.7 减少动态效果 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  /* 输入框不做高亮过渡，直接切换状态 */
+  .form-input {
+    transition: none;
+  }
+  /* 转圈动画关掉，改成一个静态的半透明圆点（保留「正在进行」的暗示），
+     真正表达「提交中」的是按钮文案「提交中…」 */
+  .btn.is-loading::after {
+    animation: none;
+    border-top-color: currentColor;
+    opacity: 0.5;
+  }
+}
+
+/* =============================================================
+   21.8 V5 未改动清单（红线复核）
+   -------------------------------------------------------------
+   · index.html：原有结构、模块顺序、文字、data-i18n 全部未动，
+     只在「联系我」之后「追加」了一个 <section id="feedback">，
+     并在 body 末尾追加了一行 supabase-js 的 CDN <script>；
+   · 蓝白（V4 后为粉蓝）主题变量：未动，表单直接复用；
+   · 乌波自定义光标（第 17 / 17.1 节 + 功能 5）：未动；
+   · Chiikawa 小八 / 吉伊卡哇装饰（第 15 / 20 节）：未动；
+   · 网易云歌单 iframe 与弹幕动画（第 19 节 + 功能 6）：未动；
+   · 汉堡导航菜单（第 16.0 节 + 功能 4）：未动；
+   · 本节只新增类名，没有覆盖第 1–20 节的任何一条规则。
+   ============================================================= */
+
+/* 22. 主页案例与数字分身 */
+#homepage-project,
+#homepage-feedback {
+  scroll-margin-top: 7rem;
+}
+
+.homepage-project .project-desc + .project-desc {
+  margin-top: 0.75rem;
+}
+
+.twin-suggestions,
+.twin-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.twin-suggestions {
+  margin-bottom: 1.25rem;
+}
+
+.twin-input-row {
+  margin-top: 0.4rem;
+}
+
+.twin-input-row .form-input {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.twin-reply p:not(:empty) {
+  margin: 1rem 0 0.35rem;
+}
+
+.twin-reply [hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* GIF 的内部动画无法通过 animation: none 暂停。 */
+  .brand::after,
+  .section-title::after,
+  .hero-inner::after,
+  .project-card::after,
+  #about .card::after,
+  #skills .card::after,
+  #twin .card::after,
+  #music .container::after,
+  .site-footer .container::after,
+  #contact .card::after {
+    background-image: none;
+  }
+}
+
+/* 问答控件需要使用整行宽度，贴图移到卡片右上。 */
+#twin .twin-card::after {
+  top: 0.75rem;
+  right: 0.75rem;
+  transform: none;
+}
+
+#twin .twin-desc {
+  padding-inline-end: calc(var(--sticker-twin) + 0.5rem);
+}
+
+@media (max-width: 480px), (prefers-reduced-motion: reduce) {
+  #twin .twin-card::after {
+    display: none;
+  }
+
+  #twin .twin-desc {
+    padding-inline-end: 0;
+  }
+}
