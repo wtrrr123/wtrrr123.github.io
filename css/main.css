@@ -2340,3 +2340,78 @@ body {
    · 汉堡导航菜单（第 16.0 节 + 功能 4）：未动；
    · 本节只新增类名，没有覆盖第 1–20 节的任何一条规则。
    ============================================================= */
+
+/* 22. 主页案例与数字分身 */
+#homepage-project,
+#homepage-feedback {
+  scroll-margin-top: 7rem;
+}
+
+.homepage-project .project-desc + .project-desc {
+  margin-top: 0.75rem;
+}
+
+.twin-suggestions,
+.twin-input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.twin-suggestions {
+  margin-bottom: 1.25rem;
+}
+
+.twin-input-row {
+  margin-top: 0.4rem;
+}
+
+.twin-input-row .form-input {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.twin-reply p:not(:empty) {
+  margin: 1rem 0 0.35rem;
+}
+
+.twin-reply [hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* GIF 的内部动画无法通过 animation: none 暂停。 */
+  .brand::after,
+  .section-title::after,
+  .hero-inner::after,
+  .project-card::after,
+  #about .card::after,
+  #skills .card::after,
+  #twin .card::after,
+  #music .container::after,
+  .site-footer .container::after,
+  #contact .card::after {
+    background-image: none;
+  }
+}
+
+/* 问答控件需要使用整行宽度，贴图移到卡片右上。 */
+#twin .twin-card::after {
+  top: 0.75rem;
+  right: 0.75rem;
+  transform: none;
+}
+
+#twin .twin-desc {
+  padding-inline-end: calc(var(--sticker-twin) + 0.5rem);
+}
+
+@media (max-width: 480px), (prefers-reduced-motion: reduce) {
+  #twin .twin-card::after {
+    display: none;
+  }
+
+  #twin .twin-desc {
+    padding-inline-end: 0;
+  }
+}

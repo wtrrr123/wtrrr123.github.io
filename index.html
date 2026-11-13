@@ -61,7 +61,7 @@
       <div class="hero-avatar" aria-hidden="true">王</div>
 
       <h1 class="hero-name" data-i18n="hero.greeting">你好，我是 <span class="highlight">王天睿</span></h1>
-      <p class="hero-tagline" data-i18n="hero.tagline">一名天津大学大一本科生，喜欢钻研前端。</p>
+      <p class="hero-tagline" data-i18n="hero.tagline">我在天津大学学习智能医学工程（脑机接口方向），也在用原生 JavaScript 做自己的个人主页。</p>
 
       <!-- 标签组：个人关键词，可自由增删 -->
       <ul class="hero-tags">
@@ -73,8 +73,8 @@
 
       <!-- 1-2 个行动按钮 -->
       <div class="hero-actions">
-        <a class="btn btn-primary" href="#projects" data-i18n="hero.action.projects">查看项目</a>
-        <a class="btn btn-outline" href="#contact" data-i18n="hero.action.contact">联系我</a>
+        <a class="btn btn-primary" href="#projects" data-i18n="hero.action.projects">查看作品</a>
+        <a class="btn btn-outline" href="#twin" data-i18n="hero.action.twin">问问数字分身</a>
       </div>
     </div>
   </section>
@@ -87,10 +87,7 @@
       <div class="container">
         <h2 class="section-title" data-i18n="about.title">关于我</h2>
         <div class="card">
-          <p class="about-intro" data-i18n="about.intro">
-            我是天津大学的一名大一本科生，就读于智能医学工程专业（脑机接口方向），
-            平时喜欢钻研前端开发。这个主页是我的课程作业 V1 版本，后续会持续迭代更新。
-          </p>
+          <p class="about-intro" data-i18n="about.intro">我是天津大学智能医学工程专业本科生，方向是脑机接口。课余我喜欢探索前端开发，也会把学习中的尝试做成网页。</p>
 
           <ul class="about-info">
             <li><span class="about-label" data-i18n="about.label.identity">身份</span> <span data-i18n="about.value.identity">天津大学大一本科生</span></li>
@@ -101,37 +98,15 @@
       </div>
     </section>
 
-    <!-- ============================================================
-         4. 项目与作品 section：卡片列表，3 个占位卡片
-         （暂未提供项目信息，保留占位，后续替换）
-         ============================================================ -->
     <section id="projects" class="section">
       <div class="container">
         <h2 class="section-title" data-i18n="projects.title">项目与作品</h2>
-        <p class="section-desc" data-i18n="projects.desc">这里展示我做过的项目或作品，目前为占位，后续替换为真实内容。</p>
-
-        <div class="project-grid">
-          <!-- 项目卡片 1：标题 + 简介 + 跳转链接占位 -->
-          <article class="card project-card">
-            <h3 class="project-title" data-i18n="projects.1.title">项目标题一（占位）</h3>
-            <p class="project-desc" data-i18n="projects.1.desc">一句话说明这个项目是做什么的、用了什么技术、有什么亮点。</p>
-            <a class="project-link" href="javascript:void(0);" data-i18n="projects.1.link">查看详情 →</a>
-          </article>
-
-          <!-- 项目卡片 2 -->
-          <article class="card project-card">
-            <h3 class="project-title" data-i18n="projects.2.title">项目标题二（占位）</h3>
-            <p class="project-desc" data-i18n="projects.2.desc">一句话说明这个项目是做什么的、用了什么技术、有什么亮点。</p>
-            <a class="project-link" href="javascript:void(0);" data-i18n="projects.2.link">查看详情 →</a>
-          </article>
-
-          <!-- 项目卡片 3 -->
-          <article class="card project-card">
-            <h3 class="project-title" data-i18n="projects.3.title">项目标题三（占位）</h3>
-            <p class="project-desc" data-i18n="projects.3.desc">一句话说明这个项目是做什么的、用了什么技术、有什么亮点。</p>
-            <a class="project-link" href="javascript:void(0);" data-i18n="projects.3.link">查看详情 →</a>
-          </article>
-        </div>
+        <article id="homepage-project" class="card project-card homepage-project">
+          <h3 class="project-title" data-i18n="projects.1.title">王天睿 · 个人主页</h3>
+          <p class="project-desc" data-i18n="projects.1.desc">我用 HTML、CSS 和原生 JavaScript 搭建了这个课程项目，从蓝白初版迭代到 Chiikawa 主题，并实现了三语切换和 Supabase 访客反馈。</p>
+          <p id="homepage-feedback" class="project-desc" data-i18n="projects.feedback">收到访客反馈后，我调整了移动端字号，在首屏补充专业方向，并修正了版本文案。</p>
+          <a class="project-link" href="https://github.com/wtrrr123/wtrrr123.github.io" data-i18n="projects.1.link">查看源代码 →</a>
+        </article>
       </div>
     </section>
 
@@ -147,7 +122,6 @@
             <li class="tag" data-i18n="skills.skill.1">HTML</li>
             <li class="tag" data-i18n="skills.skill.2">CSS</li>
             <li class="tag" data-i18n="skills.skill.3">JavaScript（学习中）</li>
-            <li class="tag" data-i18n="skills.skill.4">更多技能…（占位）</li>
           </ul>
 
           <h3 class="sub-title" data-i18n="skills.interestHeading">兴趣</h3>
@@ -201,23 +175,34 @@
       </div>
     </section>
 
-    <!-- ============================================================
-         7. 数字分身 / Digital Twin 入口：静态按钮占位
-         仅做占位按钮，不实现对话功能，留给后续 V4 / 期末扩展。
-         ============================================================ -->
     <section id="twin" class="section">
       <div class="container">
         <h2 class="section-title" data-i18n="twin.title">数字分身 · Digital Twin</h2>
-        <div class="card card-center">
-          <p class="twin-desc" data-i18n="twin.desc">这里预留了「数字分身」入口。V1 仅为静态占位按钮，后续版本（V4 / 期末扩展）再接入对话功能。</p>
-          <!-- 静态占位按钮：V1 不做任何功能，暂不跳转 -->
-          <button class="btn btn-primary" type="button" disabled data-i18n="twin.button">数字分身（敬请期待）</button>
+        <div class="card twin-card">
+          <p class="twin-desc" data-i18n="twin.desc">我是王天睿的数字分身。试着问我他的学习方向、主页项目或兴趣，我会根据公开资料回答。</p>
+          <div class="twin-suggestions">
+            <button type="button" class="btn btn-outline" data-twin-topic="profile" data-i18n="twin.question.profile">你在学什么？</button>
+            <button type="button" class="btn btn-outline" data-twin-topic="project" data-i18n="twin.question.project">这个主页怎么做的？</button>
+            <button type="button" class="btn btn-outline" data-twin-topic="feedback" data-i18n="twin.question.feedback">V4 根据反馈改了什么？</button>
+            <button type="button" class="btn btn-outline" data-twin-topic="interests" data-i18n="twin.question.interests">你有哪些兴趣？</button>
+          </div>
+          <form id="twin-form">
+            <label for="twin-question" data-i18n="twin.label">输入你的问题</label>
+            <div class="twin-input-row">
+              <input id="twin-question" class="form-input" type="text" maxlength="240" autocomplete="off" required>
+              <button type="submit" class="btn btn-primary" data-i18n="twin.send">提问</button>
+            </div>
+          </form>
+          <div id="twin-reply" class="twin-reply" aria-live="polite" aria-atomic="true">
+            <p id="twin-answer"></p>
+            <a id="twin-source" class="project-link" hidden data-i18n="twin.source">查看相关内容 →</a>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- ============================================================
-         8. 联系我 section：邮箱 + 电话 + 社交链接
+         8. 联系我 section：邮箱 + 社交链接
          ============================================================ -->
     <section id="contact" class="section">
       <div class="container">
@@ -228,11 +213,6 @@
             <li>
               <span class="contact-label" data-i18n="contact.label.email">邮箱</span>
               <a href="mailto:wtr20071014@tju.edu.cn">wtr20071014@tju.edu.cn</a>
-            </li>
-            <li>
-              <span class="contact-label" data-i18n="contact.label.phone">电话</span>
-              <!-- 点击后可直接拨号（手机端生效） -->
-              <a href="tel:18002100171">18002100171</a>
             </li>
             <li>
               <span class="contact-label" data-i18n="contact.label.github">GitHub</span>
@@ -332,7 +312,7 @@
     <div class="container">
       <!-- 年份由 JS 动态填充；版权文案单独标记，切换语言时只替换文案 -->
       <p>© <span id="year">2026</span> <span data-i18n="footer.copyright">王天睿 · 保留所有权利</span></p>
-      <p class="footer-note" data-i18n="footer.note">本项目为课程作业 V1 版本，仅用于学习交流。</p>
+      <p class="footer-note" data-i18n="footer.note">课程项目 · 用于学习交流</p>
     </div>
   </footer>
 

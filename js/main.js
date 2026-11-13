@@ -7,7 +7,7 @@
       4. 移动端汉堡菜单（< 768px 点击展开 / 收起导航）
       5. 动画光标（跟随鼠标播放乌波 APNG 动图，见 css/main.css 第 17.1 节）
       6. 网易云歌单「弹幕式滚动」展示层（V3 新增，见 css/main.css 第 19 节）
-      7. 预留扩展说明（后续 V4 数字分身对话）
+      7. 数字分身问答
       8. 访客反馈表单（V5 新增，Supabase JS Client via CDN，见 index.html 的 #feedback）
    说明：代码含注释，方便后续 V2 / V3 修改迭代。
    V1.6 补充：光标图片实为 APNG 动图（各 79 帧），而 CSS 的 cursor 属性
@@ -67,17 +67,15 @@ const I18N = {
     "header.cta": "联系我",
 
     "hero.greeting": '你好，我是 <span class="highlight">王天睿</span>',
-    "hero.tagline": "一名天津大学大一本科生，喜欢钻研前端。",
+    "hero.tagline": "我在天津大学学习智能医学工程（脑机接口方向），也在用原生 JavaScript 做自己的个人主页。",
     "hero.tag.1": "大一新生",
     "hero.tag.2": "前端开发",
     "hero.tag.3": "爱听歌",
     "hero.tag.4": "PTCG",
-    "hero.action.projects": "查看项目",
-    "hero.action.contact": "联系我",
+    "hero.action.projects": "查看作品",
 
     "about.title": "关于我",
-    "about.intro":
-      "我是天津大学的一名大一本科生，就读于智能医学工程专业（脑机接口方向），平时喜欢钻研前端开发。这个主页是我的课程作业 V1 版本，后续会持续迭代更新。",
+    "about.intro": "我是天津大学智能医学工程专业本科生，方向是脑机接口。课余我喜欢探索前端开发，也会把学习中的尝试做成网页。",
     "about.label.identity": "身份",
     "about.value.identity": "天津大学大一本科生",
     "about.label.major": "专业",
@@ -86,23 +84,15 @@ const I18N = {
     "about.value.city": "天津 / 深圳",
 
     "projects.title": "项目与作品",
-    "projects.desc": "这里展示我做过的项目或作品，目前为占位，后续替换为真实内容。",
-    "projects.1.title": "项目标题一（占位）",
-    "projects.1.desc": "一句话说明这个项目是做什么的、用了什么技术、有什么亮点。",
-    "projects.1.link": "查看详情 →",
-    "projects.2.title": "项目标题二（占位）",
-    "projects.2.desc": "一句话说明这个项目是做什么的、用了什么技术、有什么亮点。",
-    "projects.2.link": "查看详情 →",
-    "projects.3.title": "项目标题三（占位）",
-    "projects.3.desc": "一句话说明这个项目是做什么的、用了什么技术、有什么亮点。",
-    "projects.3.link": "查看详情 →",
+    "projects.1.title": "王天睿 · 个人主页",
+    "projects.1.desc": "我用 HTML、CSS 和原生 JavaScript 搭建了这个课程项目，从蓝白初版迭代到 Chiikawa 主题，并实现了三语切换和 Supabase 访客反馈。",
+    "projects.1.link": "查看源代码 →",
 
     "skills.title": "技能与兴趣",
     "skills.skillHeading": "技能",
     "skills.skill.1": "HTML",
     "skills.skill.2": "CSS",
     "skills.skill.3": "JavaScript（学习中）",
-    "skills.skill.4": "更多技能…（占位）",
     "skills.interestHeading": "兴趣",
     "skills.interest.1": "前端",
     "skills.interest.2": "听歌",
@@ -114,15 +104,24 @@ const I18N = {
     "music.fallback":
       "播放器无法显示？<a href=\"https://music.163.com/#/playlist?id=18388731081\" target=\"_blank\" rel=\"noopener\">点此在网易云音乐中打开我的歌单 →</a>",
 
+    "hero.action.twin": "问问数字分身",
+    "projects.feedback": "收到访客反馈后，我调整了移动端字号，在首屏补充专业方向，并修正了版本文案。",
+    "twin.label": "输入你的问题",
+    "twin.send": "提问",
+    "twin.source": "查看相关内容 →",
+    "twin.unknown": "公开资料里暂时没有这个问题的答案。你可以试试上面的示例问题。",
+    "twin.private": "分身只能提供公开资料。如需联系，请使用联系区的公开邮箱。",
+    "twin.question.profile": "你在学什么？",
+    "twin.question.project": "这个主页怎么做的？",
+    "twin.question.feedback": "V4 根据反馈改了什么？",
+    "twin.question.interests": "你有哪些兴趣？",
+    "twin.answer.project": "这个主页使用 HTML、CSS 和原生 JavaScript，支持三语切换。访客反馈通过 Supabase 提交。",
     "twin.title": "数字分身 · Digital Twin",
-    "twin.desc":
-      "这里预留了「数字分身」入口。V1 仅为静态占位按钮，后续版本（V4 / 期末扩展）再接入对话功能。",
-    "twin.button": "数字分身（敬请期待）",
+    "twin.desc": "我是王天睿的数字分身。试着问我他的学习方向、主页项目或兴趣，我会根据公开资料回答。",
 
     "contact.title": "联系我",
     "contact.desc": "欢迎交流、合作或联系。",
     "contact.label.email": "邮箱",
-    "contact.label.phone": "电话",
     "contact.label.github": "GitHub",
     "contact.value.github": "github.com/wtrrr123",
     "contact.label.netease": "网易云音乐",
@@ -142,7 +141,7 @@ const I18N = {
       "仅收集昵称与反馈内容，用于改进这个主页；不会收集手机号、身份证等个人信息。",
 
     "footer.copyright": "王天睿 · 保留所有权利",
-    "footer.note": "本项目为课程作业 V1 版本，仅用于学习交流。",
+    "footer.note": "课程项目 · 用于学习交流",
   },
 
   /* ---------- 繁体中文 ---------- */
@@ -158,17 +157,15 @@ const I18N = {
     "header.cta": "聯絡我",
 
     "hero.greeting": '你好，我是 <span class="highlight">王天睿</span>',
-    "hero.tagline": "一名天津大學大一本科生，喜歡鑽研前端。",
+    "hero.tagline": "我在天津大學學習智慧醫學工程（腦機介面方向），也在用原生 JavaScript 做自己的個人主頁。",
     "hero.tag.1": "大一新生",
     "hero.tag.2": "前端開發",
     "hero.tag.3": "愛聽歌",
     "hero.tag.4": "PTCG",
-    "hero.action.projects": "查看專案",
-    "hero.action.contact": "聯絡我",
+    "hero.action.projects": "查看作品",
 
     "about.title": "關於我",
-    "about.intro":
-      "我是天津大學的一名大一本科生，就讀於智能醫學工程專業（腦機接口方向），平時喜歡鑽研前端開發。這個主頁是我的課程作業 V1 版本，後續會持續迭代更新。",
+    "about.intro": "我是天津大學智慧醫學工程專業的大學生，方向是腦機介面。課餘我喜歡探索前端開發，也會把學習中的嘗試做成網頁。",
     "about.label.identity": "身分",
     "about.value.identity": "天津大學大一本科生",
     "about.label.major": "專業",
@@ -177,23 +174,15 @@ const I18N = {
     "about.value.city": "天津 / 深圳",
 
     "projects.title": "專案與作品",
-    "projects.desc": "這裡展示我做過的專案或作品，目前為佔位，後續替換為真實內容。",
-    "projects.1.title": "專案標題一（佔位）",
-    "projects.1.desc": "一句話說明這個專案是做什麼的、用了什麼技術、有什麼亮點。",
-    "projects.1.link": "查看詳情 →",
-    "projects.2.title": "專案標題二（佔位）",
-    "projects.2.desc": "一句話說明這個專案是做什麼的、用了什麼技術、有什麼亮點。",
-    "projects.2.link": "查看詳情 →",
-    "projects.3.title": "專案標題三（佔位）",
-    "projects.3.desc": "一句話說明這個專案是做什麼的、用了什麼技術、有什麼亮點。",
-    "projects.3.link": "查看詳情 →",
+    "projects.1.title": "王天睿 · 個人主頁",
+    "projects.1.desc": "我用 HTML、CSS 和原生 JavaScript 製作了這個課程專案，從藍白初版迭代到 Chiikawa 主題，並實作三語切換與 Supabase 訪客回饋。",
+    "projects.1.link": "查看原始碼 →",
 
     "skills.title": "技能與興趣",
     "skills.skillHeading": "技能",
     "skills.skill.1": "HTML",
     "skills.skill.2": "CSS",
     "skills.skill.3": "JavaScript（學習中）",
-    "skills.skill.4": "更多技能…（佔位）",
     "skills.interestHeading": "興趣",
     "skills.interest.1": "前端",
     "skills.interest.2": "聽歌",
@@ -205,15 +194,24 @@ const I18N = {
     "music.fallback":
       "播放器無法顯示？<a href=\"https://music.163.com/#/playlist?id=18388731081\" target=\"_blank\" rel=\"noopener\">點此在網易雲音樂中打開我的歌單 →</a>",
 
+    "hero.action.twin": "問問數位分身",
+    "projects.feedback": "收到訪客回饋後，我調整了行動版字級，在首頁首屏補充專業方向，並修正了版本文案。",
+    "twin.label": "輸入你的問題",
+    "twin.send": "提問",
+    "twin.source": "查看相關內容 →",
+    "twin.unknown": "公開資料裡暫時沒有這個問題的答案。你可以試試上面的範例問題。",
+    "twin.private": "分身只能提供公開資料。如需聯絡，請使用聯絡區的公開信箱。",
+    "twin.question.profile": "你在學什麼？",
+    "twin.question.project": "這個主頁怎麼做的？",
+    "twin.question.feedback": "V4 根據回饋改了什麼？",
+    "twin.question.interests": "你有哪些興趣？",
+    "twin.answer.project": "這個主頁使用 HTML、CSS 和原生 JavaScript，支援三語切換。訪客回饋透過 Supabase 提交。",
     "twin.title": "數位分身 · Digital Twin",
-    "twin.desc":
-      "這裡預留了「數位分身」入口。V1 僅為靜態佔位按鈕，後續版本（V4 / 期末擴充）再接入對話功能。",
-    "twin.button": "數位分身（敬請期待）",
+    "twin.desc": "我是王天睿的數位分身。試著問我他的學習方向、主頁專案或興趣，我會根據公開資料回答。",
 
     "contact.title": "聯絡我",
     "contact.desc": "歡迎交流、合作或聯絡。",
     "contact.label.email": "電子郵件",
-    "contact.label.phone": "電話",
     "contact.label.github": "GitHub",
     "contact.value.github": "github.com/wtrrr123",
     "contact.label.netease": "網易雲音樂",
@@ -233,7 +231,7 @@ const I18N = {
       "僅收集暱稱與回饋內容，用於改進這個主頁；不會收集手機號、身分證等個人資訊。",
 
     "footer.copyright": "王天睿 · 保留所有權利",
-    "footer.note": "本專案為課程作業 V1 版本，僅用於學習交流。",
+    "footer.note": "課程專案 · 用於學習交流",
   },
 
   /* ---------- 英语 ---------- */
@@ -249,18 +247,15 @@ const I18N = {
     "header.cta": "Contact Me",
 
     "hero.greeting": 'Hi, I\'m <span class="highlight">Wang Tianrui</span>',
-    "hero.tagline":
-      "A freshman at Tianjin University who loves exploring front-end development.",
+    "hero.tagline": "I study Intelligent Medical Engineering at Tianjin University, focusing on brain–computer interfaces, and build my homepage with vanilla JavaScript.",
     "hero.tag.1": "Freshman",
     "hero.tag.2": "Front-end Dev",
     "hero.tag.3": "Music Lover",
     "hero.tag.4": "PTCG",
-    "hero.action.projects": "View Projects",
-    "hero.action.contact": "Contact Me",
+    "hero.action.projects": "View my work",
 
     "about.title": "About Me",
-    "about.intro":
-      "I'm a freshman at Tianjin University, majoring in Intelligent Medical Engineering (Brain-Computer Interface). I enjoy exploring front-end development. This site is my V1 course project and will keep being updated.",
+    "about.intro": "I study Intelligent Medical Engineering at Tianjin University, with a focus on brain–computer interfaces. I enjoy exploring front-end development and turning what I learn into websites.",
     "about.label.identity": "Identity",
     "about.value.identity": "Freshman at Tianjin University",
     "about.label.major": "Major",
@@ -269,27 +264,15 @@ const I18N = {
     "about.value.city": "Tianjin / Shenzhen",
 
     "projects.title": "Projects & Works",
-    "projects.desc":
-      "Here I showcase my projects and works. Placeholders for now — real content coming soon.",
-    "projects.1.title": "Project One (placeholder)",
-    "projects.1.desc":
-      "A one-line description of what this project does, the tech used, and its highlights.",
-    "projects.1.link": "View details →",
-    "projects.2.title": "Project Two (placeholder)",
-    "projects.2.desc":
-      "A one-line description of what this project does, the tech used, and its highlights.",
-    "projects.2.link": "View details →",
-    "projects.3.title": "Project Three (placeholder)",
-    "projects.3.desc":
-      "A one-line description of what this project does, the tech used, and its highlights.",
-    "projects.3.link": "View details →",
+    "projects.1.title": "Tianrui Wang · Personal homepage",
+    "projects.1.desc": "I built this course project with HTML, CSS, and vanilla JavaScript. It evolved from a blue-and-white prototype into a Chiikawa-themed site with three languages and Supabase visitor feedback.",
+    "projects.1.link": "View source code →",
 
     "skills.title": "Skills & Interests",
     "skills.skillHeading": "Skills",
     "skills.skill.1": "HTML",
     "skills.skill.2": "CSS",
     "skills.skill.3": "JavaScript (learning)",
-    "skills.skill.4": "More skills… (placeholder)",
     "skills.interestHeading": "Interests",
     "skills.interest.1": "Front-end",
     "skills.interest.2": "Music",
@@ -301,15 +284,24 @@ const I18N = {
     "music.fallback":
       "Player not showing? <a href=\"https://music.163.com/#/playlist?id=18388731081\" target=\"_blank\" rel=\"noopener\">Open my playlist on NetEase Cloud Music →</a>",
 
+    "hero.action.twin": "Ask my digital twin",
+    "projects.feedback": "After receiving visitor feedback, I adjusted mobile font sizes, added my academic focus to the first screen, and corrected the version text.",
+    "twin.label": "Enter your question",
+    "twin.send": "Ask",
+    "twin.source": "Read more →",
+    "twin.unknown": "I couldn’t find an answer in the public profile. Try one of the example questions above.",
+    "twin.private": "I can only share public profile information. Please use the public email in the contact section.",
+    "twin.question.profile": "What do you study?",
+    "twin.question.project": "How did you build this site?",
+    "twin.question.feedback": "What changed after feedback in V4?",
+    "twin.question.interests": "What are your interests?",
+    "twin.answer.project": "This site uses HTML, CSS, and vanilla JavaScript, supports three languages, and uses Supabase to collect visitor feedback.",
     "twin.title": "Digital Twin",
-    "twin.desc":
-      "This is a reserved entry for my \"Digital Twin\". V1 is just a static placeholder button; the chat feature will come in a later version (V4 / final project).",
-    "twin.button": "Digital Twin (Coming Soon)",
+    "twin.desc": "I’m Tianrui Wang’s digital twin. Ask about his studies, homepage project, or interests. I answer using his public profile.",
 
     "contact.title": "Contact Me",
     "contact.desc": "Feel free to reach out for a chat or collaboration.",
     "contact.label.email": "Email",
-    "contact.label.phone": "Phone",
     "contact.label.github": "GitHub",
     "contact.value.github": "github.com/wtrrr123",
     "contact.label.netease": "NetEase Cloud Music",
@@ -329,8 +321,7 @@ const I18N = {
       "Only your nickname and message are collected, to help improve this site — no phone numbers, ID numbers, or other personal data.",
 
     "footer.copyright": "Wang Tianrui · All rights reserved",
-    "footer.note":
-      "This project is my V1 course assignment, for learning and sharing only.",
+    "footer.note": "Course project · Built for learning",
   },
 };
 
@@ -978,8 +969,62 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  /* ---------- 功能 7：预留扩展说明 ----------
-     后续 V4（数字分身对话）会在这里接入更多交互逻辑。 */
+  /* ---------- 功能 7：数字分身问答 ---------- */
+  const twinForm = document.getElementById("twin-form");
+  const twinQuestion = document.getElementById("twin-question");
+  const twinAnswer = document.getElementById("twin-answer");
+  const twinSource = document.getElementById("twin-source");
+  const twinTopics = {
+    private: { match: /手机号|手機號|电话|電話|留言|密码|密碼|phone|password|visitor messages|private/iu, keys: ["twin.private"], source: "#contact" },
+    contact: { match: /邮箱|郵箱|信箱|联系|聯絡|email|contact/iu, keys: ["contact.desc"], source: "#contact" },
+    feedback: { match: /v4|反馈|回饋|改版|迭代|feedback|changes?/iu, keys: ["projects.feedback"], source: "#homepage-feedback" },
+    project: { match: /主页|主頁|网站|網站|项目|專案|作品|javascript|html|css|supabase|homepage|website|project|build/iu, keys: ["twin.answer.project"], source: "#homepage-project" },
+    profile: { match: /专业|專業|学习|學習|在学|在學|大学|大學|脑机|腦機|study|studies|major|university|brain/iu, keys: ["about.intro"], source: "#about" },
+    interests: { match: /兴趣|興趣|爱好|愛好|技能|喜欢|喜歡|音乐|音樂|ptcg|interest|hobb|music|skills?/iu, keys: ["skills.interestHeading", "skills.interest.1", "skills.interest.2", "skills.interest.3"], source: "#skills" },
+    unknown: { keys: ["twin.unknown"] },
+  };
+  let activeTwinTopic;
+
+  function renderTwinReply() {
+    if (!activeTwinTopic) return;
+    const dict = I18N[document.documentElement.lang] || I18N[DEFAULT_LANG];
+    const answers = activeTwinTopic.keys.map(function (key) { return dict[key]; });
+    twinAnswer.textContent = answers.length === 1
+      ? answers[0]
+      : answers[0] + " · " + answers.slice(1).join(" / ");
+    twinSource.hidden = !activeTwinTopic.source;
+    if (activeTwinTopic.source) {
+      twinSource.setAttribute("href", activeTwinTopic.source);
+    } else {
+      twinSource.removeAttribute("href");
+    }
+  }
+
+  twinForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const question = twinQuestion.value.trim();
+    if (!question) {
+      twinQuestion.value = "";
+      twinQuestion.reportValidity();
+      return;
+    }
+
+    activeTwinTopic = Object.values(twinTopics).find(function (topic) {
+      return topic.match?.test(question);
+    }) || twinTopics.unknown;
+    renderTwinReply();
+  });
+
+  document.querySelectorAll("[data-twin-topic]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      activeTwinTopic = twinTopics[button.dataset.twinTopic];
+      renderTwinReply();
+    });
+  });
+
+  document.querySelectorAll(".lang-btn").forEach(function (button) {
+    button.addEventListener("click", renderTwinReply);
+  });
 
   /* =============================================================
      功能 8：访客反馈表单（V5 新增 · 通过 CDN 引入的 Supabase JS Client 提交）
