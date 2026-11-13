@@ -843,33 +843,6 @@ ul {
   color: var(--primary-text-dark);
 }
 
-/* ---------- 11. 音乐歌单嵌入 ---------- */
-/* V2 细节：歌单容器与项目卡片共用同一套设计语言 ——
-   同样的 12px 圆角、同样的边框、同样的三层柔和阴影；
-   overflow: hidden 负责把 iframe 的直角裁掉，修掉边角溢出。 */
-.music-embed {
-  border-radius: var(--card-radius);     /* 与卡片一致的圆角（V2 为 12px） */
-  overflow: hidden; /* 让 iframe 圆角生效（V2：同时修掉 iframe 边角溢出） */
-  border: 1px solid var(--card-border);  /* 视觉深化：与卡片统一浅蓝细边框 */
-  box-shadow: var(--card-shadow);        /* 视觉深化：与卡片统一柔和阴影 */
-  background: #ffffff;
-  margin-bottom: 4px;            /* 留白优化：播放器与兜底说明之间留出呼吸空间 */
-}
-.music-frame {
-  display: block;
-  width: 100%;
-  border: 0;                     /* V2：去掉 iframe 默认边框，避免裁切后露出一条线 */
-  /* 体验优化：桌面端补一份与 HTML 内联一致的高度兜底（430px） */
-  height: 430px;
-}
-.music-fallback {
-  margin-top: 20px;              /* 留白优化：兜底说明上间距 12px → 20px */
-  font-size: var(--fs-note);     /* 视觉深化：注脚级字号统一（V1.7 变量化） */
-  color: var(--text-muted);
-  text-align: center;
-  line-height: 1.75;             /* 留白优化：兜底说明行距略放宽 */
-}
-
 /* ---------- 12. 数字分身 ---------- */
 .twin-desc {
   color: var(--text-muted);
@@ -1295,23 +1268,6 @@ ul {
     gap: 12px;
   }
 
-  /* 体验优化：手机上按视口高度收敛网易云歌单 iframe 的高度。
-     固定 430px 在矮屏手机上会超出可视区，容易出现大段空白或内部滚动，
-     这里改为 320px ~ 430px 之间随视口高度平滑变化的自适应值。
-     注意：iframe 自带内联 height，必须用 !important 覆盖（不改动 HTML 结构） */
-  .music-frame {
-    height: clamp(320px, 62vh, 430px) !important;
-  }
-  /* 体验优化：保证外部容器不随 iframe 横向溢出，圆角与阴影始终完整 */
-  .music-embed {
-    max-width: 100%;
-  }
-
-  .music-fallback {
-    margin-top: 16px;
-    font-size: 0.85rem;
-  }
-
   .site-footer {
     padding: 32px 0;
   }
@@ -1565,7 +1521,6 @@ ul {
   /* 兜底高度：真实高度由 JS 按轨道数写入 style.height（2–4 轨 ≈ 116–228px）；
      移动端 /「减少动态效果」下 JS 会把内联高度清空，交回 19.1 的 height: auto */
   height: 80px;
-  margin-bottom: 16px;                 /* 与下方播放器留出间距（不是叠在上面） */
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);   /* 与卡片 / 播放器同一套圆角 */
   /* 极淡蓝色半透明底：与页面蓝白风格统一，不抢下方播放器 */
@@ -1646,7 +1601,7 @@ ul {
 /* -------------------------------------------------------------
    19.1 移动端（< 768px）与「减少动态效果」：关闭弹幕动画
    需求：手机端不做滚动动画（省性能、避免布局错乱），
-        只在展示带里静态显示歌单标题；网易云 iframe 照常可用。
+        在展示栏内静态列出歌曲。
    说明：
    · 这里用 display: none 把弹幕层整体隐藏 —— 元素不参与布局也不绘制，
      动画自然不执行，等于「零开销」，比用 animation: none 更彻底；
@@ -1667,7 +1622,10 @@ ul {
     display: none;                     /* 双保险：弹幕条目本身也隐藏 */
   }
   .danmaku-static {
-    display: block;                    /* 只保留静态的歌单标题 */
+    display: grid;
+    gap: 0.4rem;
+    margin: 0;
+    padding-inline-start: 1.25rem;
   }
 }
 
