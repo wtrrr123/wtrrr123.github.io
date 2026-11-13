@@ -14,7 +14,7 @@
    只能显示第一帧，因此新增跟随图层 index.html 的 .cursor-follow，
    由本文件功能 5 负责跟随、按下切换与回退判断。
    V3 新增：功能 6 —— 网易云歌单「弹幕式滚动」展示层。
-   · 弹幕容器与每一条弹幕都由 JS 动态生成，插入到歌单 iframe 的正上方，
+   · 弹幕容器与每一条弹幕都由 JS 动态生成，插入到音乐展示区，
      未改动 index.html（不新增、不修改任何 HTML 标签）；
    · 歌单数据写死在 MUSIC_DANMAKU 数组里（取自网易云歌单「list」：
      332 首中随机 12 首，显示为「歌名 - 歌手」+ 专辑封面网络地址），
@@ -22,7 +22,7 @@
    · 动画交给 CSS @keyframes（匀速 linear + 无限循环），JS 只负责
      量一次宽度、算动画时长与错峰时间，不逐帧操作 DOM；
    · 移动端（< 768px）与系统「减少动态效果」下由 CSS 关闭动画，
-     只静态显示歌单标题；网易云 iframe 始终正常可用；
+     静态显示歌曲列表；
    · 未改动功能 1–5（i18n、平滑滚动、汉堡菜单、乌波光标）与页面其它模块。
    V3.1 优化（弹幕行距 / 密度 / 数量自适应）：
    · 行距：轨道间距固定为「弹幕高 48px + 空隙 8px = 56px」，
@@ -99,10 +99,7 @@ const I18N = {
     "skills.interest.3": "PTCG",
 
     "music.title": "我的音乐歌单",
-    "music.desc":
-      "这里是我在网易云音乐收藏的公开歌单，播放器只做静态嵌入展示（V1 不做复杂控制）。喜欢听歌，音乐让生活有了节奏感。",
-    "music.fallback":
-      "播放器无法显示？<a href=\"https://music.163.com/#/playlist?id=18388731081\" target=\"_blank\" rel=\"noopener\">点此在网易云音乐中打开我的歌单 →</a>",
+    "music.desc": "这里展示我收藏的网易云歌单中的部分歌曲。",
 
     "hero.action.twin": "问问数字分身",
     "projects.feedback": "收到访客反馈后，我调整了移动端字号，在首屏补充专业方向，并修正了版本文案。",
@@ -189,10 +186,7 @@ const I18N = {
     "skills.interest.3": "PTCG",
 
     "music.title": "我的音樂歌單",
-    "music.desc":
-      "這裡是我在網易雲音樂收藏的公開歌單，播放器只做靜態嵌入展示（V1 不做複雜控制）。喜歡聽歌，音樂讓生活有了節奏感。",
-    "music.fallback":
-      "播放器無法顯示？<a href=\"https://music.163.com/#/playlist?id=18388731081\" target=\"_blank\" rel=\"noopener\">點此在網易雲音樂中打開我的歌單 →</a>",
+    "music.desc": "這裡展示我收藏的網易雲歌單中的部分歌曲。",
 
     "hero.action.twin": "問問數位分身",
     "projects.feedback": "收到訪客回饋後，我調整了行動版字級，在首頁首屏補充專業方向，並修正了版本文案。",
@@ -279,10 +273,7 @@ const I18N = {
     "skills.interest.3": "PTCG",
 
     "music.title": "My Music Playlist",
-    "music.desc":
-      "This is a public playlist I saved on NetEase Cloud Music. The player is a static embed (V1 has no advanced controls). I love listening to music — it gives life a rhythm.",
-    "music.fallback":
-      "Player not showing? <a href=\"https://music.163.com/#/playlist?id=18388731081\" target=\"_blank\" rel=\"noopener\">Open my playlist on NetEase Cloud Music →</a>",
+    "music.desc": "A selection of tracks from my NetEase Cloud Music playlist.",
 
     "hero.action.twin": "Ask my digital twin",
     "projects.feedback": "After receiving visitor feedback, I adjusted mobile font sizes, added my academic focus to the first screen, and corrected the version text.",
@@ -656,49 +647,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /* ---------- 功能 6：网易云歌单「弹幕式滚动」展示层（V3 新增） ----------
      【标签导航：这就是弹幕功能的完整实现；样式在 css/main.css 第 19 节】
-     目标：在不改动 index.html、也不碰网易云 iframe 的前提下，
-           给歌单模块加一条「专辑封面小图 + 歌名」的弹幕展示带。
-
-     做法与取舍：
-     · 弹幕容器与每一条弹幕都由本功能动态生成（不新增 / 不修改 HTML 标签），
-       插入到 .music-embed（网易云 iframe）的「正上方」，上下排列、几何上
-       完全不重叠 —— 所以绝不会遮挡播放器的主要播放按钮；
-     · 不调用网易云任何接口：歌单数据写死在下面的 MUSIC_DANMAKU 数组里，
-       既没有跨域问题，接口失效也不影响页面；
-     · 动画由 CSS 的 @keyframes 驱动（匀速 linear、循环播放）。本功能只做
-       两件事：① 生成 DOM；② 量一次宽度，算出每条弹幕的动画时长与错峰时间
-       写进 CSS 变量。之后不再逐帧操作 DOM，所以滚动平滑、不卡顿、不闪烁；
-     · 桌面端滚动展示；< 768px 移动端与系统「减少动态效果」下由 CSS 关闭
-       动画，只在展示带里静态显示歌单标题（省性能、避免布局错乱），
-       网易云 iframe 照常可用；
-     · 展示带整体 pointer-events: none（见 CSS 第 19 节），
-       不会遮挡 iframe、页面按钮 / 文字 / 小八装饰。
-     ============================================================ */
-
-  /* ==== 歌单数据（取自小王的网易云歌单「list」）=====================
-     数据来源：网易云歌单「list」（作者 iajshsk，共 332 首）
-               https://music.163.com/playlist?id=18388731081
-     · 已用歌单 id 拉取过完整曲目，从这里随机抽了 12 首、写死在下方的数组里
-       （随机结果固定，不会每次刷新都变）；
-     · 页面运行时不会请求网易云任何接口 —— 所以没有跨域问题，
-       接口挂了 / 歌单改了也不影响页面显示；
-     · 想换歌：直接改下面的数组即可（改完全是静态数据，不需要联网）。
-     每项两个字段：
-       title —— 弹幕显示的文字。当前是「歌名 - 歌手」，
-                只想要歌名就把 " - 歌手" 这段删掉即可；
-       cover —— 专辑封面地址，三种写法任选其一：
-                1) 网络地址（当前用法）：网易云专辑封面小图 ?param=96y96，
-                   联网时显示真封面；断网 / 图片失效时下面有 error 兜底，
-                   会自动换成内置淡蓝占位封面，不会出现裂图；
-                2) 相对路径： "assets/covers/song1.jpg"
-                   （把封面图片放进 personal-homepage/assets/ 下，
-                     并同步一份到 outputs/assets/ 即可预览；
-                     建议正方形、96×96 以上，页面上显示为 48×48）
-                3) 留空 ""  ：直接用下面 makeDanmakuCover() 的淡蓝占位封面
-     提示：
-       · 数组想放几首就放几首，条数越多弹幕越密（12 首时用 REPEAT = 1）；
-       · 只放 5–6 首时，可把 DANMAKU_REPEAT 改成 2，画面更热闹。
-     ============================================================ */
+     桌面端滚动展示歌曲，手机端和减少动态效果模式下显示静态列表。
+     ============================================================= */
   const MUSIC_DANMAKU = [
     { title: "Kill Bill - SZA", cover: "https://p2.music.126.net/qQ5e7rM-xY6YWJW9_3tR-w==/109951168121859537.jpg?param=96y96" },
     { title: "m.A.A.d city - Kendrick Lamar", cover: "https://p1.music.126.net/SCk1DYSjx9m3AR6r3lo7Fw==/109951170271201605.jpg?param=96y96" },
@@ -759,34 +709,28 @@ document.addEventListener("DOMContentLoaded", function () {
   /* 歌单播放器的外层容器：弹幕要插到它的正上方。
      如果页面里找不到它，或歌单数据为空，就跳过本功能 —— 
      保证这段代码永远不会影响其它任何功能。 */
-  const musicEmbedEl = document.querySelector("#music .music-embed");
+  const musicDisplayEl = document.getElementById("music-display");
 
-  if (musicEmbedEl && MUSIC_DANMAKU.length) {
+  if (musicDisplayEl && MUSIC_DANMAKU.length) {
     /* 1) 生成展示带骨架：
             .danmaku（外框：高度 / 圆角 / 淡蓝底 / 裁切）
               ├ .danmaku-static   移动端静态标题（桌面端隐藏）
               └ .danmaku-viewport 裁切层（弹幕在这里面飘） */
     const danmakuEl = document.createElement("div");
     danmakuEl.className = "danmaku";
-    /* 纯装饰层：滚动的歌名不需要屏幕阅读器朗读（真实歌单在下方播放器里） */
-    danmakuEl.setAttribute("aria-hidden", "true");
 
-    const danmakuStaticEl = document.createElement("div");
+    const danmakuStaticEl = document.createElement("ul");
     danmakuStaticEl.className = "danmaku-static";
+    MUSIC_DANMAKU.forEach(function (song) {
+      const item = document.createElement("li");
+      item.textContent = song.title;
+      danmakuStaticEl.appendChild(item);
+    });
     danmakuEl.appendChild(danmakuStaticEl);
 
     const danmakuViewportEl = document.createElement("div");
     danmakuViewportEl.className = "danmaku-viewport";
     danmakuEl.appendChild(danmakuViewportEl);
-
-    /* 移动端显示的静态标题：直接复用歌单区块的标题文字（不需要另写文案），
-       切换语言后重新读取一次，保证中 / 繁 / 英都同步 */
-    const musicTitleEl = document.querySelector("#music .section-title");
-
-    function syncDanmakuStaticTitle() {
-      danmakuStaticEl.textContent = musicTitleEl ? musicTitleEl.textContent.trim() : "";
-    }
-    syncDanmakuStaticTitle();
 
     /* 2) 逐条生成弹幕：专辑封面小图 + 歌名
           先把 DOM 全部建好、再统一量宽度算动画参数，避免「边建边量」反复回流。 */
@@ -825,9 +769,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    /* 3) 把展示带插到网易云 iframe 的正上方（即 .music-embed 之前），
-          不改动页面上任何已有标签与顺序 */
-    musicEmbedEl.parentNode.insertBefore(danmakuEl, musicEmbedEl);
+    musicDisplayEl.appendChild(danmakuEl);
 
     /* 4) 量宽度 → 算轨道与动画参数（V3.1：行距 / 密度 / 轨道数全部自适应）
           三个目标：
@@ -847,7 +789,7 @@ document.addEventListener("DOMContentLoaded", function () {
       /* 量宽度前先确认弹幕是显示状态：移动端 / 系统「减少动态效果」下
          它们被 CSS 隐藏（display: none），此时宽度为 0，量出来没有意义；
          顺便把 JS 写过的高度清掉，让展示带回落到 CSS 的
-         「自适应高度 + 静态标题」形态（见 css/main.css 第 19.1 节）。 */
+         「自适应高度 + 静态列表」形态（见 css/main.css 第 19.1 节）。 */
       if (!danmakuItems.length || danmakuItems[0].offsetParent === null) {
         danmakuEl.style.height = "";
         return;
@@ -960,13 +902,6 @@ document.addEventListener("DOMContentLoaded", function () {
     /* 页面完全加载（字体 / 图片就位）后再校正一次，时长更贴合真实文字宽度 */
     window.addEventListener("load", layoutDanmaku);
 
-    /* 切换语言后同步刷新移动端的静态标题
-       （延后一拍执行，等 applyLanguage 把标题文字换完再读） */
-    document.querySelectorAll(".lang-btn").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        window.setTimeout(syncDanmakuStaticTitle, 0);
-      });
-    });
   }
 
   /* ---------- 功能 7：数字分身问答 ---------- */
